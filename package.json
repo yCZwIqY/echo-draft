@@ -2,16 +2,22 @@
   "name": "echo-draft",
   "private": true,
   "type": "module",
+  "main": "electron/main.mjs",
   "scripts": {
     "build": "react-router build",
-    "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "dev": "concurrently \"vite\" \"cross-env BROWSER=none electron electron/main.mjs\"",
+    "start": "concurrently \"vite\" \"cross-env BROWSER=none electron electron/main.mjs\"",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@react-router/node": "7.15.0",
     "@react-router/serve": "7.15.0",
+    "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
+    "electron": "^42.0.1",
+    "electron-builder": "^26.8.1",
     "isbot": "^5.1.36",
+    "prettier": "^3.8.3",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router": "7.15.0"
