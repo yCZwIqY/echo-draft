@@ -1,15 +1,290 @@
 @import "tailwindcss";
 
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Suit';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Heavy.woff2') format('woff2');
+    font-weight: 900;
+    font-display: swap;
+}
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif,
+    --font-suit: "Suit", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+    --color-primary-100: #D3E0FB;
+    --color-primary-200: #A8C1F7;
+    --color-primary-300: #7CA1F3;
+    --color-primary-400: #5182EF;
+    --color-primary-500: #2563EB;
+    --color-primary-600: #244FAF;
+    --color-primary-700: #1D3C80;
+    --color-primary-800: #152851;
+    --color-primary-900: #0E1422;
+
+
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-bold: 700;
+    --font-weight-black: 900;
+
+    --text-h1: 48px;
+    --text-h1--line-height: 1.18;
+    --text-h1--letter-spacing: -0.04em;
+
+    --text-h2: 40px;
+    --text-h2--line-height: 1.2;
+    --text-h2--letter-spacing: -0.035em;
+
+    --text-h3: 32px;
+    --text-h3--line-height: 1.25;
+    --text-h3--letter-spacing: -0.03em;
+
+    --text-b1: 24px;
+    --text-b1--line-height: 1.45;
+    --text-b1--letter-spacing: -0.025em;
+
+    --text-b2: 20px;
+    --text-b2--line-height: 1.5;
+    --text-b2--letter-spacing: -0.02em;
+
+    --text-b3: 18px;
+    --text-b3--line-height: 1.55;
+    --text-b3--letter-spacing: -0.018em;
+
+    --text-b4: 16px;
+    --text-b4--line-height: 1.6;
+    --text-b4--letter-spacing: -0.015em;
+
+    --text-b5: 14px;
+    --text-b5--line-height: 1.55;
+    --text-b5--letter-spacing: -0.01em;
+
+    --text-b6: 12px;
+    --text-b6--line-height: 1.5;
+    --text-b6--letter-spacing: -0.005em;
 }
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
-
+    @apply bg-white dark:bg-gray-950;
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+
+    font-family: var(--font-suit), serif;
+    background-color: var(--color-gray-200);
+}
+
+
+@layer base {
+    html {
+        font-family: var(--font-sans);
+        color: #111827;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+}
+
+@layer components {
+    /* Header */
+    .typo-h1-l {
+        @apply text-h1 font-light;
+    }
+
+    .typo-h1-r {
+        @apply text-h1 font-regular;
+    }
+
+    .typo-h1-b {
+        @apply text-h1 font-bold;
+    }
+
+    .typo-h1-k {
+        @apply text-h1 font-black;
+    }
+
+    .typo-h2-l {
+        @apply text-h2 font-light;
+    }
+
+    .typo-h2-r {
+        @apply text-h2 font-regular;
+    }
+
+    .typo-h2-b {
+        @apply text-h2 font-bold;
+    }
+
+    .typo-h2-k {
+        @apply text-h2 font-black;
+    }
+
+    .typo-h3-l {
+        @apply text-h3 font-light;
+    }
+
+    .typo-h3-r {
+        @apply text-h3 font-regular;
+    }
+
+    .typo-h3-b {
+        @apply text-h3 font-bold;
+    }
+
+    .typo-h3-k {
+        @apply text-h3 font-black;
+    }
+
+    /* Body */
+    .typo-b1-l {
+        @apply text-b1 font-light;
+    }
+
+    .typo-b1-r {
+        @apply text-b1 font-regular;
+    }
+
+    .typo-b1-b {
+        @apply text-b1 font-bold;
+    }
+
+    .typo-b1-k {
+        @apply text-b1 font-black;
+    }
+
+    .typo-b2-l {
+        @apply text-b2 font-light;
+    }
+
+    .typo-b2-r {
+        @apply text-b2 font-regular;
+    }
+
+    .typo-b2-b {
+        @apply text-b2 font-bold;
+    }
+
+    .typo-b2-k {
+        @apply text-b2 font-black;
+    }
+
+    .typo-b3-l {
+        @apply text-b3 font-light;
+    }
+
+    .typo-b3-r {
+        @apply text-b3 font-regular;
+    }
+
+    .typo-b3-b {
+        @apply text-b3 font-bold;
+    }
+
+    .typo-b3-k {
+        @apply text-b3 font-black;
+    }
+
+    .typo-b4-l {
+        @apply text-b4 font-light;
+    }
+
+    .typo-b4-r {
+        @apply text-b4 font-regular;
+    }
+
+    .typo-b4-b {
+        @apply text-b4 font-bold;
+    }
+
+    .typo-b4-k {
+        @apply text-b4 font-black;
+    }
+
+    .typo-b5-l {
+        @apply text-b5 font-light;
+    }
+
+    .typo-b5-r {
+        @apply text-b5 font-regular;
+    }
+
+    .typo-b5-b {
+        @apply text-b5 font-bold;
+    }
+
+    .typo-b5-k {
+        @apply text-b5 font-black;
+    }
+
+    .typo-b6-l {
+        @apply text-b6 font-light;
+    }
+
+    .typo-b6-r {
+        @apply text-b6 font-regular;
+    }
+
+    .typo-b6-b {
+        @apply text-b6 font-bold;
+    }
+
+    .typo-b6-k {
+        @apply text-b6 font-black;
+    }
 }
