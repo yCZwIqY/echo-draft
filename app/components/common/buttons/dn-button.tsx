@@ -15,7 +15,7 @@ const styles = tv({
     variant: {
       primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 ',
       secondary: 'bg-gray-900 text-white hover:bg-gray-800 active:bg-gray-700',
-      outlined: 'bg-none border border-gray-800 text-gray-800 hover:bg-gray-500/10 active:bg-gray-500/20',
+      outlined: 'bg-none border border-gray-500 text-gray-800 hover:bg-gray-500/10 active:bg-gray-500/20',
       text: 'hover:bg-gray-300/50 active:bg-gray-400/50',
     },
     size: {

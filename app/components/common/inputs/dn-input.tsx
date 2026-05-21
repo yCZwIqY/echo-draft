@@ -16,8 +16,9 @@ const styles = tv({
   ],
   variants: {
     variant: {
-      outlined: 'bg-none border border-gray-800 text-gray-900 focus-within:outline-primary-500',
-      underlined: 'bg-none border-b border-gray-800 text-gray-900 rounded-none! outline-0 focus-within:border-primary-500 ',
+      outlined: 'bg-none border border-gray-500 text-gray-900 focus-within:outline-primary-500',
+      underlined:
+        'bg-none border-b border-gray-800 text-gray-900 rounded-none! outline-0 focus-within:border-primary-500 ',
       text: 'bg-gray-200 focus-within:outline-primary-500',
     },
     size: {
@@ -49,10 +50,13 @@ const DnInput = ({
 }: Props) => {
   return (
     <div
-      className={styles({ variant, size, fontWeight, rounded })}
+      className={[styles({ variant, size, fontWeight, rounded }), className].join(' ')}
       {...rest}
     >
-      <TextInput {...rest} />
+      <TextInput
+        {...rest}
+        className={className}
+      />
     </div>
   );
 };

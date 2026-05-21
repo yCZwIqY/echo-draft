@@ -1,6 +1,6 @@
 import type { Route } from './+types/design-system';
-import DnButton from '~/components/buttons/dn-button';
-import DnInput from '~/components/inputs/dn-input';
+import DnButton from '~/components/common/buttons/dn-button';
+import DnInput from '~/components/common/inputs/dn-input';
 
 export function meta({}: Route.MetaArgs) {
   return [
