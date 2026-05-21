@@ -25,8 +25,24 @@ export function createSettingsStore(app) {
     await fs.writeFile(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
   }
 
+  async function updateSettings(settings) {
+    const settingsPath = getSettingsPath();
+    const raw = await fs.readFile(settingsPath, 'utf8');
+    const prevData = JSON.parse(raw);
+
+    await fs.writeFile(
+      settingsPath,
+      JSON.stringify({
+        ...settings,
+        prevData,
+      }),
+      'utf8',
+    );
+  }
+
   return {
     read,
     write,
+    updateSettings
   };
 }

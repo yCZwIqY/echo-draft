@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+const DEFAULT_IGNORE_FILES=['workspace-info.json']
+
 export async function ensureDirectory(dirPath) {
   await fs.mkdir(dirPath, {
     recursive: true,
@@ -23,7 +25,7 @@ export async function readTextFile(filePath) {
 export async function readDirectoryTree(dirPath, options = {}) {
   const maxDepth = options.maxDepth ?? 5;
   const currentDepth = options.currentDepth ?? 0;
-  const ignore = options.ignore ?? [];
+  const ignore = [...DEFAULT_IGNORE_FILES, ...(options.ignore ?? [])];
 
   if (currentDepth >= maxDepth) {
     return [];

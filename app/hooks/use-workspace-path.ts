@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import {
+  createWorkspace,
   getElectronMeta,
   initCurrentWorkspace,
   isElectronReady,
@@ -46,16 +47,23 @@ export function useWorkspacePath() {
 
   const updateWorkspaceRoot = async (workspaceInfo: WorkspaceInfo | null) => {
     if (workspaceInfo) {
+      setWorkspacePath(workspaceInfo.path);
+      setStatusText('');
       return await updateWorkspaceRootPath(workspaceInfo?.path);
     }
 
     return null;
   };
 
+  const createNewWorkspace = async (parentPath: string, workspaceName: string) => {
+    return await createWorkspace(`${parentPath}/${workspaceName}`);
+  };
+
   return {
     changeWorkspacePath,
     statusText,
     workspacePath,
-    updateWorkspaceRoot
+    updateWorkspaceRoot,
+    createNewWorkspace
   };
 }

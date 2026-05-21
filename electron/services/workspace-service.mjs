@@ -1,12 +1,43 @@
 import path from 'node:path';
 import fs from 'node:fs/promises';
 
-import { getDefaultWorkspacePath } from '../common/paths.mjs';
+import { getDefaultWorkspaceDataFilePath, getDefaultWorkspacePath } from '../common/paths.mjs';
 import { ensureDirectory, pathExists } from './file-system.mjs';
 import { createSettingsStore } from './settings-store.mjs';
 
 export function createWorkspaceService(app) {
   const settingsStore = createSettingsStore(app);
+
+  function buildWorkspaceData(targetPath, overrides = {}) {
+    const normalizedPath = path.resolve(targetPath);
+
+    return {
+      id: crypto.randomUUID(),
+      path: normalizedPath,
+      parentPath: path.dirname(normalizedPath),
+      name: path.basename(normalizedPath),
+      createdAt: new Date().toISOString(),
+      recentVisits: [],
+      ...overrides,
+    };
+  }
+
+  async function readWorkspaceData(workspacePath) {
+    const raw = await fs.readFile(getDefaultWorkspaceDataFilePath(workspacePath), 'utf8');
+    return JSON.parse(raw);
+  }
+
+  async function writeWorkspaceData(workspacePath, data) {
+    await fs.writeFile(
+      getDefaultWorkspaceDataFilePath(workspacePath),
+      JSON.stringify(data, null, 2),
+      'utf8',
+    );
+  }
+
+  function mergeRecentVisits(recentVisits = [], visit, max = 10) {
+    return [visit, ...recentVisits.filter((item) => item?.path !== visit.path)].slice(0, max);
+  }
 
   async function getCurrentWorkspacePath() {
     const settings = await settingsStore.read();
@@ -81,13 +112,20 @@ export function createWorkspaceService(app) {
     }
   }
 
-  async function addGroup(name) {
-    const workspacePath = await getCurrentWorkspacePath();
-    const safeName = sanitizeGroupName(name);
-    const groupPath = path.join(workspacePath, safeName);
+  async function createWorkspace(targetPath) {
+    const normalizedTargetPath = path.resolve(targetPath);
+    const safeName = sanitizeGroupName(path.basename(normalizedTargetPath));
+    const groupPath = path.join(path.dirname(normalizedTargetPath), safeName);
 
     await assertInsideWorkspace(groupPath);
     await ensureDirectory(groupPath);
+
+    await writeWorkspaceData(
+      groupPath,
+      buildWorkspaceData(groupPath, {
+        name: safeName,
+      }),
+    );
 
     return {
       name: safeName,
@@ -127,20 +165,83 @@ export function createWorkspaceService(app) {
 
   async function updateRoot(targetPath) {
     const settings = await settingsStore.read();
-   await settingsStore.write({
+    await settingsStore.write({
       ...settings,
       workspacePath: targetPath,
+    });
+
+    return {
+      path: targetPath,
+      exists: await pathExists(targetPath),
+    };
+  }
+
+  async function getWorkflowInfo(workflowPath) {
+    const normalizedWorkflowPath = path.resolve(workflowPath);
+    const workflowInfoPath = getDefaultWorkspaceDataFilePath(normalizedWorkflowPath);
+
+    await ensureDirectory(normalizedWorkflowPath);
+
+    if (!(await pathExists(workflowInfoPath))) {
+      await writeWorkspaceData(normalizedWorkflowPath, buildWorkspaceData(normalizedWorkflowPath));
+    }
+
+    const workflowData = await readWorkspaceData(normalizedWorkflowPath);
+    const currentWorkspaceRoot = path.resolve(await getCurrentWorkspacePath());
+    const parentWorkflowPath = path.dirname(normalizedWorkflowPath);
+    const hasParentWorkflow =
+      parentWorkflowPath !== normalizedWorkflowPath &&
+      parentWorkflowPath.startsWith(currentWorkspaceRoot) &&
+      (await pathExists(getDefaultWorkspaceDataFilePath(parentWorkflowPath)));
+
+    if (hasParentWorkflow) {
+      await addRecentVisit(parentWorkflowPath, workflowData);
+    }
+
+    await addRecentVisitToSettings(workflowData);
+
+    return workflowData;
+  }
+
+  async function updateWorkspaceInfo(workflowPath, data) {
+    const updatedWorkspaceInfo = {
+      ...(await readWorkspaceData(workflowPath)),
+      ...data,
+    };
+    await writeWorkspaceData(workflowPath, updatedWorkspaceInfo);
+
+    return updatedWorkspaceInfo;
+  }
+
+  async function addRecentVisit(workflowPath, visit) {
+    const data = await readWorkspaceData(workflowPath);
+    const updatedWorkspaceInfo = {
+      ...data,
+      recentVisits: mergeRecentVisits(data?.recentVisits, visit),
+    };
+
+    await writeWorkspaceData(workflowPath, updatedWorkspaceInfo);
+  }
+
+  async function addRecentVisitToSettings(visit) {
+    const settings = await settingsStore.read();
+
+    await settingsStore.write({
+      ...settings,
+      recentVisits: mergeRecentVisits(settings?.recentVisits, visit),
     });
   }
 
   return {
-    addGroup,
+    createWorkspace,
     getCurrentWorkspaceInfo,
     initCurrentWorkspace,
     removeWorkspace,
     renameWorkspace,
     resetWorkspacePath,
     setCurrentWorkspacePath,
-    updateRoot
+    updateRoot,
+    getWorkflowInfo,
+    updateWorkspaceInfo,
   };
 }

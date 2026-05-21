@@ -4,3 +4,7 @@ import path from 'node:path';
 export function getDefaultWorkspacePath() {
   return path.join(os.homedir(), 'Documents', 'draft-novel');
 }
+
+export function getDefaultWorkspaceDataFilePath(workspacePath) {
+  return path.join(workspacePath, 'workspace-info.json');
+}
