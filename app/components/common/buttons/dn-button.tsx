@@ -10,7 +10,7 @@ interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
 }
 
 const styles = tv({
-  base: 'outline-2 outline-transparent outline-offset-1 transition-all focus:outline-primary-500',
+  base: 'outline-2 outline-transparent outline-offset-1 transition-all focus:outline-primary-500 flex items-center justify-center',
   variants: {
     variant: {
       primary: 'bg-primary-500 text-white hover:bg-primary-600 active:bg-primary-700 ',
@@ -19,9 +19,9 @@ const styles = tv({
       text: 'hover:bg-gray-300/50 active:bg-gray-400/50',
     },
     size: {
-      s: 'h-8 typo-b6-b px-2 py-1',
-      m: 'h-11 typo-b3-b px-4 py-2',
-      l: 'h-13 typo-b2-b px-5 py-2',
+      s: 'h-7 typo-b6-b px-2',
+      m: 'h-9 typo-b4-b px-4',
+      l: 'h-11 typo-b2-b px-5',
     },
     rounded: {
       s: 'rounded-sm!',

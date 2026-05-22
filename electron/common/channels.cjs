@@ -4,6 +4,10 @@ module.exports = {
   },
   file: {
     read: 'file:read',
+    readImage: 'file:read-image',
+    remove: 'file:remove',
+    saveImage: 'file:save-image',
+
   },
   workspace: {
     getWorkspaceTree: 'workspace:get-tree',
@@ -21,5 +25,7 @@ module.exports = {
   },
   document: {
     createDocument: 'document:create',
+    getDocument: 'document:get',
+    updateDocument: 'document:update',
   }
 };

@@ -18,13 +18,13 @@ export function isElectronReady() {
   return Boolean(getElectronApi());
 }
 
-export async function getWorkspaceTree() {
+export async function getWorkspaceTree(path?: string) {
   const electronApi = getElectronApi();
 
   if (!electronApi?.getWorkspaceTree) {
     throw new Error('electronAPI.getWorkspaceTree is not available');
   }
-  return electronApi.getWorkspaceTree();
+  return electronApi.getWorkspaceTree(path);
 }
 
 export function onWorkspaceTreeChanged(listener: () => void) {
@@ -55,6 +55,16 @@ export async function readFile(filePath: string) {
   }
 
   return electronApi.readFile(filePath);
+}
+
+export async function readImage(filePath: string) {
+  const electronApi = getElectronApi();
+
+  if (!electronApi?.readImage) {
+    throw new Error('electronAPI.readImage is not available');
+  }
+
+  return electronApi.readImage(filePath);
 }
 
 export async function getCurrentWorkspacePath() {
@@ -89,8 +99,8 @@ export async function selectWorkspacePath() {
 
 export async function updateWorkspaceRootPath(targetPath: string) {
   const electronApi = getElectronApi();
-  if (!electronApi?.selectWorkspacePath) {
-    throw new Error('electronAPI.selectWorkspacePath is not available');
+  if (!electronApi?.updateWorkspaceRoot) {
+    throw new Error('electronAPI.updateWorkspaceRoot is not available');
   }
 
   return electronApi.updateWorkspaceRoot(targetPath);
@@ -114,7 +124,7 @@ export async function getWorkspaceInfo(path: string) {
   return electronApi.getWorkspaceInfo(path);
 }
 
-export async function updateWorkspaceInfo(path: string, workspaceInfo: Partial<WorkSpaceData>) {
+export async function updateWorkspaceInfo(path: string, workspaceInfo: Partial<WorkspaceNode>) {
   const electronApi = getElectronApi();
   if (!electronApi?.updateWorkspaceInfo) {
     throw new Error('electronAPI.updateWorkspaceInfo is not available');
@@ -123,11 +133,51 @@ export async function updateWorkspaceInfo(path: string, workspaceInfo: Partial<W
   return electronApi.updateWorkspaceInfo(path, workspaceInfo);
 }
 
-export async function createDocument(path: string) {
+export async function createDocument(path: string, name?: string) {
   const electronApi = getElectronApi();
   if (!electronApi?.createDocument) {
     throw new Error('electronAPI.createDocument is not available');
   }
 
-  return electronApi.createDocument(path);
+  return electronApi.createDocument(path, name);
+}
+
+export async function getDocument(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.getDocument) {
+    throw new Error('electronAPI.getDocument is not available');
+  }
+
+  return electronApi.getDocument(path);
+}
+
+export async function updateDocument(path: string, data: Partial<WorkspaceNode>) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.updateDocument) {
+    throw new Error('electronAPI.updateDocument is not available');
+  }
+
+  return electronApi.updateDocument(path, data);
+}
+
+export async function saveImage(workflowPath: string, file: File) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.saveImage) {
+    throw new Error('electronAPI.saveImage is not available');
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  return await window.electronAPI.saveImage(
+    workflowPath,
+    file.name,
+    Array.from(new Uint8Array(arrayBuffer)),
+  );
+}
+
+export async function removeFile(filePath: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.removeFile) {
+    throw new Error('electronAPI.removeFile is not available');
+  }
+  return electronApi.removeFile(filePath);
 }

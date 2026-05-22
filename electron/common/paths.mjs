@@ -6,5 +6,17 @@ export function getDefaultWorkspacePath() {
 }
 
 export function getDefaultWorkspaceDataFilePath(workspacePath) {
-  return path.join(workspacePath, 'workspace-info.json');
+  return path.join(workspacePath, 'workspace.json');
+}
+
+export function getWorkspaceDocumentsDirectoryPath(workspacePath) {
+  return path.join(workspacePath, 'documents');
+}
+
+export function getWorkspaceDocumentDataFilePath(workspacePath, documentId) {
+  return path.join(getWorkspaceDocumentsDirectoryPath(workspacePath), `${documentId}.json`);
+}
+
+export function getWorkspaceImagesDirectoryPath(rootWorkspacePath) {
+  return path.join(rootWorkspacePath, 'images');
 }

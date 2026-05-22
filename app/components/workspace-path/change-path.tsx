@@ -8,11 +8,13 @@ interface Props {
 }
 const ChangePath = ({ label = '현재경로', path, setWorkspace }: Props) => {
   return (
-    <label className={''}>
-      <div className={'text-xs pb-1'}>{label}</div>
+    <label className={'m-2'}>
+      <div className={'pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400'}>
+        {label}
+      </div>
       <Tooltip
         popover={
-          <div className={'shadow text-xs bg-white p-2 translate-x-5 rounded-sm mt-1'}>{path}</div>
+          <div className={'mt-2 rounded-xl bg-stone-950 px-3 py-2 text-xs text-white shadow-xl'}>{path}</div>
         }
         direction={'bottom'}
       >
@@ -26,7 +28,9 @@ const ChangePath = ({ label = '현재경로', path, setWorkspace }: Props) => {
 
             setWorkspace(result);
           }}
-          className={'bg-gray-200 text-xs p-2 truncate rounded-md text-gray-500 cursor-default'}
+          className={
+            'surface-field cursor-default truncate px-3 py-3 text-sm text-stone-500 transition-colors hover:border-primary-200 hover:bg-primary-50/70'
+          }
         >
           {path}
         </div>

@@ -21,9 +21,11 @@ window.addEventListener('DOMContentLoaded', () => {
 contextBridge.exposeInMainWorld('electronAPI', {
   selectFolder: () => ipcRenderer.invoke(channels.folder.select),
   readFile: (filePath) => ipcRenderer.invoke(channels.file.read, filePath),
+  readImage: (filePath) => ipcRenderer.invoke(channels.file.readImage, filePath),
 
   //workspace
-  getWorkspaceTree: () => ipcRenderer.invoke(channels.workspace.getWorkspaceTree),
+  getWorkspaceTree: (targetPath) =>
+    ipcRenderer.invoke(channels.workspace.getWorkspaceTree, targetPath),
   onWorkspaceTreeChanged: (listener) => {
     const wrappedListener = () => listener();
     ipcRenderer.on(channels.workspace.treeChanged, wrappedListener);
@@ -49,5 +51,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.invoke(channels.workspace.updateWorkspaceInfo, targetPath, workspaceInfo),
 
   //document
-  createDocument: () => ipcRenderer.invoke(channels.document.createDocument),
+  createDocument: (workspacePath, name) =>
+    ipcRenderer.invoke(channels.document.createDocument, workspacePath, name),
+  getDocument: (documentPath) => ipcRenderer.invoke(channels.document.getDocument, documentPath),
+  updateDocument: (documentPath, data) =>
+    ipcRenderer.invoke(channels.document.updateDocument, documentPath, data),
+
+  //
+  saveImage: (workflowPath, fileName, buffer) =>
+    ipcRenderer.invoke(channels.file.saveImage, workflowPath, fileName, buffer),
+  removeFile: (filePath) => ipcRenderer.invoke(channels.file.remove, filePath),
 });

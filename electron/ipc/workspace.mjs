@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { BrowserWindow, dialog, ipcMain } from 'electron';
 
 import channels from '../common/channels.cjs';
-import { ensureDirectory, readDirectoryTree } from '../services/file-system.mjs';
+import { ensureDirectory } from '../services/file-system.mjs';
 import { createWorkspaceService } from '../services/workspace-service.mjs';
 
 export function registerWorkspaceIpcHandlers(app) {
@@ -61,10 +61,10 @@ export function registerWorkspaceIpcHandlers(app) {
     watchedWorkspacePath = workspacePath;
   }
 
-  ipcMain.handle(channels.workspace.getWorkspaceTree, async () => {
+  ipcMain.handle(channels.workspace.getWorkspaceTree, async (_, path) => {
     const rootWorkspace = await workspaceService.getCurrentWorkspaceInfo();
     startWorkspaceWatcher(rootWorkspace.path);
-    return readDirectoryTree(rootWorkspace.path, { maxDepth: 100 });
+    return workspaceService.getWorkspaceTree(path);
   });
 
   ipcMain.handle(channels.workspace.getCurrentPath, async () => {
@@ -145,5 +145,13 @@ export function registerWorkspaceIpcHandlers(app) {
     }
 
     stopWorkspaceWatcher();
+  });
+
+  ipcMain.handle(channels.file.saveImage, async (_, workflowPath, fileName, buffer) => {
+    return workspaceService.saveImage(workflowPath, fileName, buffer);
+  });
+
+  ipcMain.handle(channels.file.remove, async (_, filePath) => {
+    await workspaceService.removeFile(filePath);
   });
 }
