@@ -27,6 +27,16 @@ export async function getWorkspaceTree(path?: string) {
   return electronApi.getWorkspaceTree(path);
 }
 
+export async function getTrashItems() {
+  const electronApi = getElectronApi();
+
+  if (!electronApi?.getTrashItems) {
+    throw new Error('electronAPI.getTrashItems is not available');
+  }
+
+  return electronApi.getTrashItems();
+}
+
 export function onWorkspaceTreeChanged(listener: () => void) {
   const electronApi = getElectronApi();
 
@@ -115,6 +125,33 @@ export async function createWorkspace(path: string) {
   return electronApi.createWorkspace(path);
 }
 
+export async function removeWorkspace(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.removeWorkspace) {
+    throw new Error('electronAPI.removeWorkspace is not available');
+  }
+
+  return electronApi.removeWorkspace(path);
+}
+
+export async function purgeWorkspace(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.purgeWorkspace) {
+    throw new Error('electronAPI.purgeWorkspace is not available');
+  }
+
+  return electronApi.purgeWorkspace(path);
+}
+
+export async function restoreWorkspace(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.restoreWorkspace) {
+    throw new Error('electronAPI.restoreWorkspace is not available');
+  }
+
+  return electronApi.restoreWorkspace(path);
+}
+
 export async function getWorkspaceInfo(path: string) {
   const electronApi = getElectronApi();
   if (!electronApi?.getWorkspaceInfo) {
@@ -151,6 +188,33 @@ export async function getDocument(path: string) {
   return electronApi.getDocument(path);
 }
 
+export async function removeDocument(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.removeDocument) {
+    throw new Error('electronAPI.removeDocument is not available');
+  }
+
+  return electronApi.removeDocument(path);
+}
+
+export async function purgeDocument(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.purgeDocument) {
+    throw new Error('electronAPI.purgeDocument is not available');
+  }
+
+  return electronApi.purgeDocument(path);
+}
+
+export async function restoreDocument(path: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.restoreDocument) {
+    throw new Error('electronAPI.restoreDocument is not available');
+  }
+
+  return electronApi.restoreDocument(path);
+}
+
 export async function updateDocument(path: string, data: Partial<WorkspaceNode>) {
   const electronApi = getElectronApi();
   if (!electronApi?.updateDocument) {
@@ -180,4 +244,13 @@ export async function removeFile(filePath: string) {
     throw new Error('electronAPI.removeFile is not available');
   }
   return electronApi.removeFile(filePath);
+}
+
+
+export async function showInFolder(filePath: string) {
+  const electronApi = getElectronApi();
+  if (!electronApi?.showInFolder) {
+    throw new Error('electronAPI.showInFolder is not available');
+  }
+  return electronApi.showInFolder(filePath);
 }

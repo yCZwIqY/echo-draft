@@ -19,7 +19,7 @@ const styles = tv({
       outlined: 'bg-none border border-gray-500 text-gray-900 focus-within:outline-primary-500',
       underlined:
         'bg-none border-b border-gray-800 text-gray-900 rounded-none! outline-0 focus-within:border-primary-500 ',
-      text: 'bg-gray-200 focus-within:outline-primary-500',
+      text: 'bg-none focus-within:outline-primary-500',
     },
     size: {
       s: 'min-w-4 h-8 typo-b6-b',

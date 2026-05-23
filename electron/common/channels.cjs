@@ -7,10 +7,12 @@ module.exports = {
     readImage: 'file:read-image',
     remove: 'file:remove',
     saveImage: 'file:save-image',
+    showInFolder: 'show-in-folder',
 
   },
   workspace: {
     getWorkspaceTree: 'workspace:get-tree',
+    getTrashItems: 'workspace:get-trash-items',
     treeChanged: 'workspace:tree-changed',
     getCurrentPath: 'workspace:get-current-path',
     initCurrent: 'workspace:init-current',
@@ -20,12 +22,17 @@ module.exports = {
     createWorkspace: 'workspace:create',
     renameWorkspace: 'workspace:rename',
     removeWorkspace: 'workspace:remove',
+    purgeWorkspace: 'workspace:purge',
+    restoreWorkspace: 'workspace:restore',
     getWorkspaceInfo: 'workspace:get-info',
     updateWorkspaceInfo: 'workspace:update-info',
   },
   document: {
     createDocument: 'document:create',
     getDocument: 'document:get',
+    removeDocument: 'document:remove',
+    purgeDocument: 'document:purge',
+    restoreDocument: 'document:restore',
     updateDocument: 'document:update',
   }
 };

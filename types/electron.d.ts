@@ -3,6 +3,22 @@ export {};
 declare global {
   type WorkspaceNodeType = 'document' | 'workspace';
 
+  type WorkspaceNodeWorkspace = {
+    description?: string;
+    coverPath?: string;
+    deletedAt?: string | null;
+  };
+
+  type WorkspaceNodeDocument = {
+    title?: string;
+    subTitle?: string;
+    draft?: ScriptContent;
+    manuscript?: ScriptContent;
+    draftLength?: number;
+    manuscriptLength?: number;
+    deletedAt?: string | null;
+  };
+
   type ScriptContent = {
     content: string;
     charsWithSpaces: number;
@@ -17,18 +33,13 @@ declare global {
     path: string;
     parentPath: string;
     parentId?: string | null;
-    thumbnailPath?: string;
     name: string;
-    title?: string;
-    subTitle?: string;
-    description?: string;
-    coverPath?: string;
     createdAt?: string;
     updatedAt?: string;
-    draft?: ScriptContent;
-    manuscript?: ScriptContent;
-    draftLength?: number;
-    manuscriptLength?: number;
+    deletedAt?: string | null;
+    trashed?: boolean;
+    workspace?: WorkspaceNodeWorkspace;
+    document?: WorkspaceNodeDocument;
     children?: WorkspaceNode[];
     recentVisits?: WorkspaceNode[];
   };
@@ -53,6 +64,7 @@ declare global {
       readImage: (filePath: string) => Promise<string>;
 
       getWorkspaceTree: (path?: string) => Promise<WorkspaceNode[]>;
+      getTrashItems: () => Promise<WorkspaceNode[]>;
       onWorkspaceTreeChanged: (listener: () => void) => () => void;
       getCurrentWorkspacePath: () => Promise<WorkspaceInfo>;
       initCurrentWorkspace: () => Promise<WorkspaceInfo>;
@@ -65,6 +77,8 @@ declare global {
         newName: string,
       ) => Promise<{ oldPath: string; newPath: string }>;
       removeWorkspace: (targetPath: string) => Promise<{ removed: boolean; path: string }>;
+      purgeWorkspace: (targetPath: string) => Promise<{ removed: boolean; path: string }>;
+      restoreWorkspace: (targetPath: string) => Promise<{ restored: boolean; path: string }>;
       getWorkspaceInfo: (targetPath: string) => Promise<WorkspaceNode>;
       updateWorkspaceInfo: (
         targetPath: string,
@@ -73,6 +87,9 @@ declare global {
 
       createDocument: (targetPath: string, name?: string) => Promise<WorkspaceNode>;
       getDocument: (documentPath: string) => Promise<WorkspaceNode>;
+      removeDocument: (documentPath: string) => Promise<{ removed: boolean; path: string }>;
+      purgeDocument: (documentPath: string) => Promise<{ removed: boolean; path: string }>;
+      restoreDocument: (documentPath: string) => Promise<{ restored: boolean; path: string }>;
       updateDocument: (
         documentPath: string,
         data: Partial<WorkspaceNode>,
@@ -80,6 +97,7 @@ declare global {
 
       saveImage: (workflowPath: string, fileName: string, buffer: number[]) => Promise<string>;
       removeFile: (filePath: string) => Promise<void>;
+      showInFolder: (filePath: string) => Promise<void>;
     };
   }
 }

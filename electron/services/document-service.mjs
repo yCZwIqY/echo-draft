@@ -15,9 +15,24 @@ export function createDocumentService(app) {
     return workspaceService.updateDocument(documentPath, data);
   }
 
+  async function removeDocument(documentPath) {
+    return workspaceService.removeDocument(documentPath);
+  }
+
+  async function purgeDocument(documentPath) {
+    return workspaceService.purgeDocument(documentPath);
+  }
+
+  async function restoreDocument(documentPath) {
+    return workspaceService.restoreDocument(documentPath);
+  }
+
   return {
     createDocument,
     getDocument,
+    purgeDocument,
+    removeDocument,
+    restoreDocument,
     updateDocument,
   };
 }

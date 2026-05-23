@@ -12,6 +12,7 @@ const SideBar = () => {
   const [workspaceTree, setWorkspaceTree] = useState<WorkspaceNode[]>([]);
   const [collapsed, setCollapsed] = useState(false);
 
+
   useEffect(() => {
     if (!workspacePath) {
       setWorkspaceTree([]);
@@ -113,7 +114,7 @@ const SideBar = () => {
                 {workspaceTree.map((workspace) => (
                   <SideBarItem
                     {...workspace}
-                    key={workspace.path}
+                    key={workspace.id ?? workspace.path}
                   />
                 ))}
               </div>

@@ -11,8 +11,9 @@ import { CiFileOn } from 'react-icons/ci';
 interface Props {
   targetPath?: string;
   children?: ReactNode;
+  onCreated?: () => void;
 }
-const AddWorkspaceButton = ({ targetPath, children }: Props) => {
+const AddWorkspaceButton = ({ targetPath, children, onCreated }: Props) => {
   const { workspacePath, createNewWorkspace } = useWorkspacePath();
   const [parentGroup, setParentGroup] = useState(targetPath || workspacePath);
   const [name, setName] = useState<string>('');
@@ -89,6 +90,7 @@ const AddWorkspaceButton = ({ targetPath, children }: Props) => {
 
     try {
       await createNewWorkspace(parentGroup, name);
+      onCreated?.();
       setIsOpen(false);
     } catch (error) {
       showToast((error as Error).message, 'danger');
@@ -103,6 +105,7 @@ const AddWorkspaceButton = ({ targetPath, children }: Props) => {
 
     try {
       await createDocument(parentGroup, name);
+      onCreated?.();
       setIsOpen(false);
     } catch (error) {
       showToast((error as Error).message, 'danger');

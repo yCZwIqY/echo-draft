@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 
-import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
 
 import channels from '../common/channels.cjs';
 import { ensureDirectory } from '../services/file-system.mjs';
@@ -122,6 +122,18 @@ export function registerWorkspaceIpcHandlers(app) {
     return result;
   });
 
+  ipcMain.handle(channels.workspace.purgeWorkspace, async (_, targetPath) => {
+    const result = await workspaceService.purgeWorkspace(targetPath);
+    scheduleWorkspaceTreeChanged();
+    return result;
+  });
+
+  ipcMain.handle(channels.workspace.restoreWorkspace, async (_, targetPath) => {
+    const result = await workspaceService.restoreWorkspace(targetPath);
+    scheduleWorkspaceTreeChanged();
+    return result;
+  });
+
   ipcMain.handle(channels.workspace.updateRoot, async (_, name) => {
     const workspaceInfo = await workspaceService.updateRoot(name);
     startWorkspaceWatcher(workspaceInfo.path);
@@ -132,6 +144,10 @@ export function registerWorkspaceIpcHandlers(app) {
   ipcMain.handle(channels.workspace.getWorkspaceInfo, async (_, targetPath) => {
     const data = await workspaceService.getWorkflowInfo(targetPath);
     return data;
+  });
+
+  ipcMain.handle(channels.workspace.getTrashItems, async () => {
+    return workspaceService.getTrashItems();
   });
 
   ipcMain.handle(channels.workspace.updateWorkspaceInfo, async (_, targetPath, workflowInfo) => {
@@ -153,5 +169,16 @@ export function registerWorkspaceIpcHandlers(app) {
 
   ipcMain.handle(channels.file.remove, async (_, filePath) => {
     await workspaceService.removeFile(filePath);
+  });
+
+  ipcMain.handle(channels.file.showInFolder, async (_, filePath) => {
+    const targetPath = workspaceService.toFileSystemPath(filePath);
+
+    console.log('[showInFolder] input:', filePath.slice(0,100));
+    console.log('[showInFolder] target:', targetPath.slice(0,100));
+
+    shell.showItemInFolder(targetPath);
+
+    return targetPath;
   });
 }
