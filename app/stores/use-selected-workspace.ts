@@ -1,10 +1,15 @@
 import { create } from 'zustand';
 
 interface SelectedWorkspace {
-  selectedWorkspace?: FileTreeNode;
-  setSelectedWorkspace: (selectedWorkspace: FileTreeNode) => void;
+  selectedWorkspace?: WorkspaceNode;
+  selectedWorkspaceId?: string;
+  setSelectedWorkspace: (selectedWorkspace?: WorkspaceNode) => void;
 }
 
 export const useSelectedWorkspace = create<SelectedWorkspace>((set) => ({
-  setSelectedWorkspace: (selectedWorkspace) => set({ selectedWorkspace }),
+  setSelectedWorkspace: (selectedWorkspace) =>
+    set({
+      selectedWorkspace,
+      selectedWorkspaceId: selectedWorkspace?.id,
+    }),
 }));

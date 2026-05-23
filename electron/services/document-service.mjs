@@ -1,28 +1,38 @@
-import { formatDate } from '../../utils/date-utils.ts';
-import path from 'node:path';
-import fs from 'node:fs/promises';
+import { createWorkspaceService } from './workspace-service.mjs';
 
 export function createDocumentService(app) {
-  async function createDocument(workspacePath) {
-    const documentName = `${formatDate(new Date())}`;
-    const documentData = {
-      id: crypto.randomUUID(),
-      name: documentName,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      parentPath: workspacePath,
-      path: path.join(workspacePath, `${documentName}.json`),
-    };
-    await fs.writeFile(
-      path.join(workspacePath, `${documentName}.json`),
-      JSON.stringify(documentData, null, 2),
-      'utf8',
-    );
+  const workspaceService = createWorkspaceService(app);
 
-    return documentData;
+  async function createDocument(workspacePath, name) {
+    return workspaceService.createDocument(workspacePath, name);
+  }
+
+  async function getDocument(documentPath) {
+    return workspaceService.getDocument(documentPath);
+  }
+
+  async function updateDocument(documentPath, data) {
+    return workspaceService.updateDocument(documentPath, data);
+  }
+
+  async function removeDocument(documentPath) {
+    return workspaceService.removeDocument(documentPath);
+  }
+
+  async function purgeDocument(documentPath) {
+    return workspaceService.purgeDocument(documentPath);
+  }
+
+  async function restoreDocument(documentPath) {
+    return workspaceService.restoreDocument(documentPath);
   }
 
   return {
     createDocument,
+    getDocument,
+    purgeDocument,
+    removeDocument,
+    restoreDocument,
+    updateDocument,
   };
 }

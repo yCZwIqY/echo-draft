@@ -7,20 +7,41 @@ interface Props {
 
 export const useModal = ({ content }: Props, dependencies: unknown[] = []) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isRendered, setIsRendered] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsRendered(true);
+      return;
+    }
+
+    const timeout = window.setTimeout(() => {
+      setIsRendered(false);
+    }, 220);
+
+    return () => window.clearTimeout(timeout);
+  }, [isOpen]);
 
   const modalContent = useMemo(
     () => (
-      <div className={'absolute inset-0 bg-black/30 flex justify-center items-center'}>
-        <div ref={contentRef}>{content}</div>
+      <div
+        className={`modal-overlay absolute inset-0 flex justify-center items-center px-4 ${isOpen ? 'modal-overlay--open' : 'modal-overlay--closed'}`}
+      >
+        <div
+          ref={contentRef}
+          className={`modal-surface ${isOpen ? 'modal-surface--open' : 'modal-surface--closed'}`}
+        >
+          {content}
+        </div>
       </div>
     ),
-    [content, ...dependencies],
+    [content, isOpen, ...dependencies],
   );
 
   const { portal } = usePortal({
     content: modalContent,
-    visible: isOpen,
+    visible: isRendered,
     rootId: 'root',
   });
 

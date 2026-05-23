@@ -1,27 +1,22 @@
 export {};
 
 declare global {
-  type FileTreeNode = {
-    name: string;
-    path: string;
-    type: 'file' | 'directory';
-    children?: FileTreeNode[];
-  };
+  type WorkspaceNodeType = 'document' | 'workspace';
 
-  type WorkspaceInfo = {
-    path: string;
-    exists: boolean;
-  };
-
-  type WorkSpaceData = {
-    id?: string;
-    path: string;
-    parentPath: string;
-    name: string;
+  type WorkspaceNodeWorkspace = {
     description?: string;
-    thumbnail?: string;
-    createdAt?: string;
-    recentVisits?: (WorkSpaceData | DocumentData)[];
+    coverPath?: string;
+    deletedAt?: string | null;
+  };
+
+  type WorkspaceNodeDocument = {
+    title?: string;
+    subTitle?: string;
+    draft?: ScriptContent;
+    manuscript?: ScriptContent;
+    draftLength?: number;
+    manuscriptLength?: number;
+    deletedAt?: string | null;
   };
 
   type ScriptContent = {
@@ -32,20 +27,31 @@ declare global {
     updatedAt: string;
   };
 
-  type DocumentData = {
+  type WorkspaceNode = {
     id?: string;
-    parentPath: string;
+    type: WorkspaceNodeType;
     path: string;
+    parentPath: string;
+    parentId?: string | null;
     name: string;
-    title: string;
-    subTitle?: string;
-    draft?: ScriptContent;
-    manuscript?: ScriptContent;
+    createdAt?: string;
+    updatedAt?: string;
+    deletedAt?: string | null;
+    trashed?: boolean;
+    workspace?: WorkspaceNodeWorkspace;
+    document?: WorkspaceNodeDocument;
+    children?: WorkspaceNode[];
+    recentVisits?: WorkspaceNode[];
+  };
+
+  type WorkspaceInfo = {
+    path: string;
+    exists: boolean;
   };
 
   type Setting = {
     workspacePath: string;
-    recentVisits: (WorkSpaceData | DocumentData)[];
+    recentVisits: WorkspaceNode[];
   };
 
   interface Window {
@@ -53,11 +59,12 @@ declare global {
       preloadReady: boolean;
     };
     electronAPI: {
-      selectFolder: () => Promise<FileTreeNode | null>;
+      selectFolder: () => Promise<WorkspaceNode | null>;
       readFile: (filePath: string) => Promise<string>;
+      readImage: (filePath: string) => Promise<string>;
 
-      //workspace
-      getWorkspaceTree: () => Promise<FileTreeNode[]>;
+      getWorkspaceTree: (path?: string) => Promise<WorkspaceNode[]>;
+      getTrashItems: () => Promise<WorkspaceNode[]>;
       onWorkspaceTreeChanged: (listener: () => void) => () => void;
       getCurrentWorkspacePath: () => Promise<WorkspaceInfo>;
       initCurrentWorkspace: () => Promise<WorkspaceInfo>;
@@ -70,14 +77,27 @@ declare global {
         newName: string,
       ) => Promise<{ oldPath: string; newPath: string }>;
       removeWorkspace: (targetPath: string) => Promise<{ removed: boolean; path: string }>;
-      getWorkspaceInfo: (targetPath: string) => Promise<WorkSpaceData>;
+      purgeWorkspace: (targetPath: string) => Promise<{ removed: boolean; path: string }>;
+      restoreWorkspace: (targetPath: string) => Promise<{ restored: boolean; path: string }>;
+      getWorkspaceInfo: (targetPath: string) => Promise<WorkspaceNode>;
       updateWorkspaceInfo: (
         targetPath: string,
-        workspaceInfo: Partial<WorkSpaceData>,
-      ) => Promise<WorkSpaceData>;
+        workspaceInfo: Partial<WorkspaceNode>,
+      ) => Promise<WorkspaceNode>;
 
-      //document
-      createDocument: (targetPath: string) => Promise<DocumentData>;
+      createDocument: (targetPath: string, name?: string) => Promise<WorkspaceNode>;
+      getDocument: (documentPath: string) => Promise<WorkspaceNode>;
+      removeDocument: (documentPath: string) => Promise<{ removed: boolean; path: string }>;
+      purgeDocument: (documentPath: string) => Promise<{ removed: boolean; path: string }>;
+      restoreDocument: (documentPath: string) => Promise<{ restored: boolean; path: string }>;
+      updateDocument: (
+        documentPath: string,
+        data: Partial<WorkspaceNode>,
+      ) => Promise<WorkspaceNode>;
+
+      saveImage: (workflowPath: string, fileName: string, buffer: number[]) => Promise<string>;
+      removeFile: (filePath: string) => Promise<void>;
+      showInFolder: (filePath: string) => Promise<void>;
     };
   }
 }

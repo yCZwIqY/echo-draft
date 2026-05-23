@@ -122,13 +122,15 @@
 
 html,
 body {
-    @apply bg-white dark:bg-gray-950;
+    @apply bg-white;
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
 
     font-family: var(--font-suit), serif;
-    background-color: var(--color-gray-200);
+    background:
+            radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 30%),
+            linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%);
 }
 
 
@@ -138,6 +140,10 @@ body {
         color: #111827;
         -webkit-font-smoothing: antialiased;
         text-rendering: optimizeLegibility;
+    }
+
+    body {
+        overflow: hidden;
     }
 }
 
@@ -286,5 +292,73 @@ body {
 
     .typo-b6-k {
         @apply text-b6 font-black;
+    }
+
+    .modal-overlay {
+        background: rgba(28, 25, 23, 0.16);
+        backdrop-filter: blur(6px);
+        transition:
+                opacity 220ms ease,
+                backdrop-filter 220ms ease;
+    }
+
+    .modal-overlay--open {
+        opacity: 1;
+    }
+
+    .modal-overlay--closed {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+        pointer-events: none;
+    }
+
+    .modal-surface {
+        transform-origin: top center;
+        transition:
+                opacity 220ms ease,
+                transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                filter 220ms ease;
+    }
+
+    .modal-surface--open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+
+    .modal-surface--closed {
+        opacity: 0;
+        transform: translateY(16px) scale(0.96);
+        filter: blur(4px);
+        pointer-events: none;
+    }
+
+    .sidebar-shell {
+        backdrop-filter: blur(18px);
+    }
+
+    .surface-panel {
+        @apply rounded-[26px] border border-white/70 bg-white/65 shadow-[0_18px_45px_rgba(15,23,42,0.06)] backdrop-blur;
+    }
+
+    .surface-card {
+        @apply rounded-2xl border border-stone-200 bg-white/80;
+    }
+
+    .surface-field {
+        @apply rounded-2xl border border-stone-200 bg-stone-100/90;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar-thumb {
+        background: rgba(120, 113, 108, 0.24);
+        border-radius: 999px;
+    }
+
+    .sidebar-scroll::-webkit-scrollbar-track {
+        background: transparent;
     }
 }

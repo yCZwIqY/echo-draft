@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 
-import { BrowserWindow, dialog, ipcMain } from 'electron';
+import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
 
 import channels from '../common/channels.cjs';
-import { ensureDirectory, readDirectoryTree } from '../services/file-system.mjs';
+import { ensureDirectory } from '../services/file-system.mjs';
 import { createWorkspaceService } from '../services/workspace-service.mjs';
 
 export function registerWorkspaceIpcHandlers(app) {
@@ -61,10 +61,10 @@ export function registerWorkspaceIpcHandlers(app) {
     watchedWorkspacePath = workspacePath;
   }
 
-  ipcMain.handle(channels.workspace.getWorkspaceTree, async () => {
+  ipcMain.handle(channels.workspace.getWorkspaceTree, async (_, path) => {
     const rootWorkspace = await workspaceService.getCurrentWorkspaceInfo();
     startWorkspaceWatcher(rootWorkspace.path);
-    return readDirectoryTree(rootWorkspace.path, { maxDepth: 100 });
+    return workspaceService.getWorkspaceTree(path);
   });
 
   ipcMain.handle(channels.workspace.getCurrentPath, async () => {
@@ -122,6 +122,18 @@ export function registerWorkspaceIpcHandlers(app) {
     return result;
   });
 
+  ipcMain.handle(channels.workspace.purgeWorkspace, async (_, targetPath) => {
+    const result = await workspaceService.purgeWorkspace(targetPath);
+    scheduleWorkspaceTreeChanged();
+    return result;
+  });
+
+  ipcMain.handle(channels.workspace.restoreWorkspace, async (_, targetPath) => {
+    const result = await workspaceService.restoreWorkspace(targetPath);
+    scheduleWorkspaceTreeChanged();
+    return result;
+  });
+
   ipcMain.handle(channels.workspace.updateRoot, async (_, name) => {
     const workspaceInfo = await workspaceService.updateRoot(name);
     startWorkspaceWatcher(workspaceInfo.path);
@@ -132,6 +144,10 @@ export function registerWorkspaceIpcHandlers(app) {
   ipcMain.handle(channels.workspace.getWorkspaceInfo, async (_, targetPath) => {
     const data = await workspaceService.getWorkflowInfo(targetPath);
     return data;
+  });
+
+  ipcMain.handle(channels.workspace.getTrashItems, async () => {
+    return workspaceService.getTrashItems();
   });
 
   ipcMain.handle(channels.workspace.updateWorkspaceInfo, async (_, targetPath, workflowInfo) => {
@@ -145,5 +161,24 @@ export function registerWorkspaceIpcHandlers(app) {
     }
 
     stopWorkspaceWatcher();
+  });
+
+  ipcMain.handle(channels.file.saveImage, async (_, workflowPath, fileName, buffer) => {
+    return workspaceService.saveImage(workflowPath, fileName, buffer);
+  });
+
+  ipcMain.handle(channels.file.remove, async (_, filePath) => {
+    await workspaceService.removeFile(filePath);
+  });
+
+  ipcMain.handle(channels.file.showInFolder, async (_, filePath) => {
+    const targetPath = workspaceService.toFileSystemPath(filePath);
+
+    console.log('[showInFolder] input:', filePath.slice(0,100));
+    console.log('[showInFolder] target:', targetPath.slice(0,100));
+
+    shell.showItemInFolder(targetPath);
+
+    return targetPath;
   });
 }

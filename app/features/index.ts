@@ -1,3 +1,4 @@
 export * from './side-bar';
+export * from './breadcrumb';
 export * from '../components/workspace-path';
-export * from '../components/add-group-modal'
+export * from '../components/add-workspace-modal'
