@@ -14,14 +14,12 @@ import DnButton from '~/components/common/buttons/dn-button';
 import AddWorkspaceButton from '~/components/add-workspace-modal/add-workspace-button';
 import WorkspaceList from '~/features/manuscript/workspace-data/workspace-list';
 import TrashList from '~/features/manuscript/workspace-data/trash-list';
-import WorkflowSummary from '~/features/manuscript/workspace-data/workflow-summary';
+import WorkspaceSummary from '~/features/manuscript/workspace-data/workspace-summary';
 import { WorkspaceBreadcrumb } from '~/features';
-import { useNavigate } from 'react-router';
 
 const WorkspaceData = () => {
   const selectedWorkspace = useSelectedWorkspace((state) => state.selectedWorkspace);
   const setSelectedWorkspace = useSelectedWorkspace((state) => state.setSelectedWorkspace);
-  const navigate = useNavigate();
   const [workspaceData, setWorkspaceData] = useState<WorkspaceNode | null>(null);
   const [tree, setTree] = useState<WorkspaceNode[]>([]);
   const [trashItems, setTrashItems] = useState<WorkspaceNode[]>([]);
@@ -106,7 +104,7 @@ const WorkspaceData = () => {
   return (
     <div className={'flex flex-col flex-1 p-8 gap-4'}>
       <WorkspaceBreadcrumb />
-      <WorkflowSummary
+      <WorkspaceSummary
         workspaceData={workspaceData}
         onUpdated={(nextWorkspaceData) => {
           setWorkspaceData(nextWorkspaceData);

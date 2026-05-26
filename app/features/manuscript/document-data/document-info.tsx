@@ -1,0 +1,96 @@
+import { useEffect, useState } from 'react';
+import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
+import DnInput from '~/components/common/inputs/dn-input';
+import { updateDocument } from '~/lib/electron-api';
+import { formatDate } from '../../../../utils/date-utils';
+
+interface Props {
+  workspaceData: WorkspaceNode;
+  onUpdated?: (workspaceData: WorkspaceNode) => void;
+}
+const DocumentInfo = ({ workspaceData, onUpdated }: Props) => {
+  const [title, setTitle] = useState<string>('');
+  const [subTitle, setSubTitle] = useState<string>('');
+
+  useEffect(() => {
+    if (workspaceData) {
+      setTitle(workspaceData.document?.title ?? workspaceData.name ?? '');
+      setSubTitle(workspaceData?.document?.subTitle ?? '');
+    }
+
+    return () => {
+      setTitle('');
+      setSubTitle('');
+    };
+  }, [workspaceData]);
+
+  const handleUpdateDocumentData = async (data: Partial<WorkspaceNode>) => {
+    if (!workspaceData?.path) {
+      return;
+    }
+    const updatedWorkspace = await updateDocument(workspaceData?.path, {
+      ...data,
+    });
+    if (updatedWorkspace) onUpdated?.(updatedWorkspace);
+  };
+
+  return (
+    <section className={'shadow-sm p-5 w-full bg-white rounded-lg flex gap-4'}>
+      <div className={'flex flex-col flex-1'}>
+        <div className={'flex flex-col gap-2'}>
+          <h3 className={'text-2xl font-bold text-neutral-700'}>
+            <DnInput
+              variant={'text'}
+              value={title}
+              className={'font-bold'}
+              onChange={(e) => setTitle(e.target.value)}
+              onBlur={() => {
+                if (!title) {
+                  setTitle(workspaceData.document?.title ?? workspaceData.name ?? '');
+                  return;
+                }
+
+                void handleUpdateDocumentData({
+                  name: title,
+                  document: {
+                    ...workspaceData.document,
+                    title,
+                  },
+                });
+              }}
+            />
+          </h3>
+          <DnInput
+            variant={'text'}
+            value={subTitle}
+            className={'text-neutral-500'}
+            onChange={(e) => setSubTitle(e.target.value)}
+            onBlur={() => {
+              void handleUpdateDocumentData({
+                document: {
+                  ...workspaceData.document,
+                  title,
+                  subTitle,
+                },
+              });
+            }}
+            placeholder={'서브제목을 입력하세요.'}
+          />
+        </div>
+        <div className={'flex flex-wrap gap-5 text-sm text-neutral-400 pt-2'}>
+          <div className={'flex items-center gap-1'}>
+            <AiOutlineCalendar />
+            {formatDate(new Date(workspaceData?.createdAt ?? ''), 'YYYY-MM-DD HH:mm:SS')}
+          </div>
+          <div className={'flex items-center gap-1'}>
+            <AiOutlineClockCircle />
+            {formatDate(new Date(workspaceData?.updatedAt ?? ''), 'YYYY-MM-DD HH:mm:SS')}
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export default DocumentInfo;

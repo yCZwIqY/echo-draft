@@ -18,7 +18,19 @@ export const showToast = (
     toast(message, {
       style: {
         borderRadius: '10px',
-        background: '#ab3d3d',
+        background: '#333',
+        border: '1px solid #ab3d3d',
+        color: '#fff',
+      },
+    });
+  }
+
+  if (type === 'success') {
+    toast(message, {
+      style: {
+        borderRadius: '10px',
+        background: '#333',
+        border: '1px solid #4cab3d',
         color: '#fff',
       },
     });

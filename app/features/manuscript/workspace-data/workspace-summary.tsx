@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { formatDate } from '../../../../utils/date-utils';
 import { FaCamera } from 'react-icons/fa';
-import { AiOutlineCalendar } from 'react-icons/ai';
+import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
 import {
   readImage,
   removeFile,
@@ -11,12 +10,13 @@ import {
 } from '~/lib/electron-api';
 import DnButton from '~/components/common/buttons/dn-button';
 import DnInput from '~/components/common/inputs/dn-input';
+import { formatDate } from '../../../../utils/date-utils';
 
 interface Props {
   workspaceData?: WorkspaceNode | null;
   onUpdated?: (workspaceData: WorkspaceNode) => void;
 }
-const WorkflowSummary = ({ workspaceData, onUpdated }: Props) => {
+const WorkspaceSummary = ({ workspaceData, onUpdated }: Props) => {
   const [coverSrc, setCoverSrc] = useState('');
   const [coverPath, setCoverPath] = useState('');
   const [name, setName] = useState('');
@@ -159,9 +159,15 @@ const WorkflowSummary = ({ workspaceData, onUpdated }: Props) => {
             }}
           />
         </h3>
-        <div className={'flex gap-1 items-center text-sm text-neutral-400'}>
-          <AiOutlineCalendar />{' '}
-          {formatDate(new Date(workspaceData?.createdAt ?? ''), 'YYYY-MM-DD HH:mm:SS')}
+        <div className={'flex flex-wrap gap-5 text-sm text-neutral-400'}>
+          <div className={'flex items-center gap-1'}>
+            <AiOutlineCalendar />
+            {formatDate(new Date(workspaceData?.createdAt ?? ''), 'YYYY-MM-DD HH:mm:SS')}
+          </div>
+          <div className={'flex items-center gap-1'}>
+            <AiOutlineClockCircle />
+            {formatDate(new Date(workspaceData?.updatedAt ?? ''), 'YYYY-MM-DD HH:mm:SS')}
+          </div>
         </div>
         <div className={'mt-2 flex-1'}>
           <textarea
@@ -183,4 +189,4 @@ const WorkflowSummary = ({ workspaceData, onUpdated }: Props) => {
   );
 };
 
-export default WorkflowSummary;
+export default WorkspaceSummary;
