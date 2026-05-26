@@ -29,8 +29,17 @@ export function createEmptyStore(workspacePath) {
   };
 }
 
+function isEmptyJsonFileContent(raw) {
+  return typeof raw !== 'string' || raw.trim() === '';
+}
+
 export async function readStore(workspacePath) {
   const raw = await fs.readFile(getDefaultWorkspaceDataFilePath(workspacePath), 'utf8');
+
+  if (isEmptyJsonFileContent(raw)) {
+    return null;
+  }
+
   return JSON.parse(raw);
 }
 
@@ -50,8 +59,27 @@ export async function readDocumentContent(workspacePath, documentId) {
     };
   }
 
-  const raw = await fs.readFile(documentDataPath, 'utf8');
-  return JSON.parse(raw);
+  try {
+    const raw = await fs.readFile(documentDataPath, 'utf8');
+
+    if (isEmptyJsonFileContent(raw)) {
+      return {
+        title: '',
+        subTitle: '',
+        draft: undefined,
+        manuscript: undefined,
+      };
+    }
+
+    return JSON.parse(raw);
+  } catch {
+    return {
+      title: '',
+      subTitle: '',
+      draft: undefined,
+      manuscript: undefined,
+    };
+  }
 }
 
 export async function writeDocumentContent(workspacePath, documentId, data) {
@@ -248,7 +276,26 @@ export async function ensureStore(workspacePath) {
   await ensureDirectory(normalizedWorkspacePath);
 
   if (await pathExists(storeFilePath)) {
-    const store = await readStore(normalizedWorkspacePath);
+    let store = null;
+
+    try {
+      store = await readStore(normalizedWorkspacePath);
+    } catch {
+      store = null;
+    }
+
+    if (!store) {
+      const { store: recoveredStore, documentContents } =
+        await convertLegacyTreeToStore(normalizedWorkspacePath);
+      const nextStore = await writeStore(normalizedWorkspacePath, recoveredStore);
+
+      for (const documentContent of documentContents) {
+        await writeDocumentContent(normalizedWorkspacePath, documentContent.id, documentContent);
+      }
+
+      return nextStore;
+    }
+
     const migratedStore = await migrateStoreDocumentStorage(normalizedWorkspacePath, store);
 
     if (migratedStore !== store) {

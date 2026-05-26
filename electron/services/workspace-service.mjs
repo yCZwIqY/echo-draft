@@ -10,7 +10,6 @@ import { deleteFile, ensureDirectory, pathExists } from './file-system.mjs';
 import { createSettingsStore } from './settings-store.mjs';
 import {
   buildStoredDocumentMeta,
-  createEmptyStore,
   ensureStore,
   readDocumentContent,
   writeDocumentContent,
@@ -22,7 +21,6 @@ import {
   buildRootWorkspaceNode,
   buildTrashNodes,
   buildTreeNodes,
-  buildWorkspaceNode,
   toRecentVisit,
 } from './workspace/nodes.mjs';
 import {
@@ -145,7 +143,9 @@ export function createWorkspaceService(app) {
 
     await settingsStore.write({
       ...settings,
-      recentVisits: (settings?.recentVisits ?? []).filter((visit) => !removedIds.has(visit.id ?? '')),
+      recentVisits: (settings?.recentVisits ?? []).filter(
+        (visit) => !removedIds.has(visit.id ?? ''),
+      ),
     });
   }
 
@@ -318,7 +318,9 @@ export function createWorkspaceService(app) {
       ...store,
       groups: store.groups.filter((group) => !removedGroupIds.has(group.id)),
       documents: store.documents.filter((document) => !removedDocumentIds.has(document.id)),
-      recentVisits: (store.recentVisits ?? []).filter((visit) => !removedNodeIds.has(visit.id ?? '')),
+      recentVisits: (store.recentVisits ?? []).filter(
+        (visit) => !removedNodeIds.has(visit.id ?? ''),
+      ),
     };
 
     await writeStore(workspacePath, nextStore);
@@ -413,6 +415,13 @@ export function createWorkspaceService(app) {
       title: documentName,
       subTitle: '',
       draft: {
+        content: '',
+        charsWithSpaces: 0,
+        charsWithoutSpaces: 0,
+        createdAt: now(),
+        updatedAt: now(),
+      },
+      manuscript: {
         content: '',
         charsWithSpaces: 0,
         charsWithoutSpaces: 0,
@@ -596,7 +605,7 @@ export function createWorkspaceService(app) {
     const workflowData =
       normalizedWorkflowPath === normalizePath(workspacePath)
         ? buildRootWorkspaceNode(workspacePath, store)
-        : buildNodeInfo(workspacePath, store).nodeByPath.get(normalizedWorkflowPath) ?? null;
+        : (buildNodeInfo(workspacePath, store).nodeByPath.get(normalizedWorkflowPath) ?? null);
 
     if (!workflowData) {
       throw new Error('워크스페이스를 찾을 수 없습니다.');
