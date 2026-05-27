@@ -349,16 +349,16 @@ body {
         @apply rounded-2xl border border-stone-200 bg-stone-100/90;
     }
 
-    .sidebar-scroll::-webkit-scrollbar {
+    ::-webkit-scrollbar {
         width: 8px;
     }
 
-    .sidebar-scroll::-webkit-scrollbar-thumb {
+    ::-webkit-scrollbar-thumb {
         background: rgba(120, 113, 108, 0.24);
         border-radius: 999px;
     }
 
-    .sidebar-scroll::-webkit-scrollbar-track {
+    ::-webkit-scrollbar-track {
         background: transparent;
     }
 }

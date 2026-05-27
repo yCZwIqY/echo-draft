@@ -16,7 +16,7 @@ const DnEditorToolbar = ({ editor }: { editor: Editor | null }) => {
     `cursor-pointer transition-colors ${active ? 'text-gray-800' : 'text-neutral-500 hover:text-gray-700'}`;
 
   return (
-    <div className={'flex gap-4 items-center border-b border-neutral-200 p-2 text-lg [&>button]:p-2'}>
+    <div className={'flex gap-4 items-center border-b border-neutral-200 p-2 text-md [&>button]:p-1 w-full'}>
       <div className={'flex gap-4 items-center'}>
         <button
           type={'button'}

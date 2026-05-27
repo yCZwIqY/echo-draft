@@ -43,7 +43,7 @@ const SideBarItem = (fileTreeNode: Props) => {
           });
           navigate('manuscript');
         }}
-        className={`group flex w-full cursor-pointer items-center gap-3 rounded-2xl border px-3 py-2 text-sm transition-all duration-300 ${isSelected ? 'border-primary-200 bg-primary-50 text-primary-700 shadow-[0_12px_25px_rgba(37,99,235,0.14)]' : 'border-transparent text-stone-600 hover:border-stone-200 hover:bg-white/75 hover:text-stone-900'}`}
+        className={`group flex w-full cursor-pointer items-center gap-3 rounded-2xl border px-3 py-2 text-sm transition-all duration-300 ${isSelected ? 'border-primary-200 bg-primary-50 text-primary-700 ' : 'border-transparent text-stone-600 hover:border-stone-200 hover:bg-white/75 hover:text-stone-900'}`}
       >
         <div
           className={`text-[16px] transition-transform duration-300 ${isSelected ? 'scale-110 text-primary-500' : 'group-hover:scale-105'}`}

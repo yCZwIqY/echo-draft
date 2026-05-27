@@ -30,7 +30,7 @@ export const DocumentData = () => {
   }, [selectedWorkspace?.id, selectedWorkspace?.path, selectedWorkspace?.type]);
 
   return (
-    <div className={'flex flex-1 flex-col gap-4 p-8'}>
+    <div className={'flex flex-1 flex-col gap-4 p-8 w-full'}>
       <WorkspaceBreadcrumb />
       {documentData && (
         <div>
