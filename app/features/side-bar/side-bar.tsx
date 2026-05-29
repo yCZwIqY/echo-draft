@@ -12,7 +12,6 @@ const SideBar = () => {
   const [workspaceTree, setWorkspaceTree] = useState<WorkspaceNode[]>([]);
   const [collapsed, setCollapsed] = useState(false);
 
-
   useEffect(() => {
     if (!workspacePath) {
       setWorkspaceTree([]);
@@ -43,7 +42,7 @@ const SideBar = () => {
 
   return (
     <aside
-      className={`p-4 bg-white h-dvh ${collapsed ? 'w-16' : 'w-[250px]'} transition-all flex flex-col justify-center`}
+      className={`p-3 bg-white h-dvh ${collapsed ? 'w-16 items-center' : 'w-[250px] '} transition-all flex flex-col justify-center`}
     >
       <div className={'flex flex-1 flex-col items-center overflow-hidden'}>
         <div className={`flex w-full justify-between items-center my-2`}>
@@ -61,7 +60,7 @@ const SideBar = () => {
               </div>
             </div>
           )}
-          <div className={'shrink-0 flex-1 flex justify-end'}>
+          <div className={`shrink-0 flex-1 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>
             <DnIconButton
               aria-label={collapsed ? '사이드바 열기' : '사이드바 닫기'}
               onClick={() => setCollapsed((prev) => !prev)}
@@ -86,7 +85,6 @@ const SideBar = () => {
             </span>
           )}
         </Link>
-
         <div className={'flex min-h-0 flex-1 flex-col overflow-visible w-full my-2'}>
           <div className={`flex items-center justify-between cursor-default`}>
             {!collapsed && (
@@ -96,7 +94,7 @@ const SideBar = () => {
                 Workspace
               </div>
             )}
-            <div className={'flex flex-1 justify-end'}>
+            <div className={`flex flex-1 ${collapsed ? 'justify-center' : 'justify-end'}`}>
               <AddWorkspaceButton targetPath={workspacePath}>
                 <DnIconButton
                   variant={'dark'}
