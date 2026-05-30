@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
 import DnInput from '~/components/common/inputs/dn-input';
-import { updateDocument } from '~/lib/electron-api';
+import { updateDocument } from '~/lib/electron/document-api';
 import { formatDate } from '../../../../utils/date-utils';
 
 interface Props {
@@ -24,7 +24,7 @@ const DocumentInfo = ({ workspaceData, onUpdated }: Props) => {
     };
   }, [workspaceData]);
 
-  const handleUpdateDocumentData = async (data: Partial<WorkspaceNode>) => {
+  const handleUpdateDocumentData = async (data: DocumentUpdatePayload) => {
     if (!workspaceData?.path) {
       return;
     }
@@ -53,7 +53,6 @@ const DocumentInfo = ({ workspaceData, onUpdated }: Props) => {
                 void handleUpdateDocumentData({
                   name: title,
                   document: {
-                    ...workspaceData.document,
                     title,
                   },
                 });
@@ -68,7 +67,6 @@ const DocumentInfo = ({ workspaceData, onUpdated }: Props) => {
             onBlur={() => {
               void handleUpdateDocumentData({
                 document: {
-                  ...workspaceData.document,
                   title,
                   subTitle,
                 },

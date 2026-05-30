@@ -1,15 +1,20 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import type {
+  WorkspaceStoreDocument,
+  WorkspaceStoreGroup,
+  WorkspaceStoreRecentVisit,
+} from './store-types.js';
 
 export function now() {
   return new Date().toISOString();
 }
 
-export function normalizePath(targetPath) {
+export function normalizePath(targetPath: string) {
   return path.resolve(targetPath);
 }
 
-export function toFileSystemPath(targetPath) {
+export function toFileSystemPath(targetPath: string) {
   if (typeof targetPath === 'string' && targetPath.startsWith('file://')) {
     return fileURLToPath(targetPath);
   }
@@ -17,11 +22,15 @@ export function toFileSystemPath(targetPath) {
   return targetPath;
 }
 
-export function mergeRecentVisits(recentVisits = [], visit, max = 10) {
+export function mergeRecentVisits(
+  recentVisits: WorkspaceStoreRecentVisit[] = [],
+  visit: WorkspaceStoreRecentVisit,
+  max = 10,
+) {
   return [visit, ...recentVisits.filter((item) => item?.path !== visit.path)].slice(0, max);
 }
 
-export function sanitizeNodeName(name) {
+export function sanitizeNodeName(name: string) {
   const trimmedName = name.trim();
 
   if (!trimmedName) {
@@ -35,7 +44,7 @@ export function sanitizeNodeName(name) {
   return trimmedName;
 }
 
-export function collectGroupDescendantIds(groups, targetId) {
+export function collectGroupDescendantIds(groups: WorkspaceStoreGroup[], targetId: string) {
   const descendants = new Set([targetId]);
   let changed = true;
 
@@ -53,8 +62,11 @@ export function collectGroupDescendantIds(groups, targetId) {
   return descendants;
 }
 
-export function collectGroupAncestorIds(groupsById, targetParentId) {
-  const ancestors = new Set();
+export function collectGroupAncestorIds(
+  groupsById: Map<string, WorkspaceStoreGroup>,
+  targetParentId: string | null,
+) {
+  const ancestors = new Set<string>();
   let cursorId = targetParentId;
 
   while (cursorId) {
@@ -70,8 +82,11 @@ export function collectGroupAncestorIds(groupsById, targetParentId) {
   return ancestors;
 }
 
-export function collectDocumentIdsByGroupIds(documents, groupIds) {
-  const documentIds = new Set();
+export function collectDocumentIdsByGroupIds(
+  documents: WorkspaceStoreDocument[],
+  groupIds: Set<string>,
+) {
+  const documentIds = new Set<string>();
 
   for (const document of documents) {
     if (groupIds.has(document.parentId ?? '')) {

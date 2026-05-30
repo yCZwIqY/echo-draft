@@ -15,7 +15,9 @@ declare global {
     draft?: ScriptContent;
     manuscript?: ScriptContent;
     draftLength?: number;
+    draftCharsWithoutSpaces?: number;
     manuscriptLength?: number;
+    manuscriptCharsWithoutSpaces?: number;
     deletedAt?: string | null;
   };
 
@@ -54,6 +56,21 @@ declare global {
     recentVisits: WorkspaceNode[];
   };
 
+  type WorkspaceUpdatePayload = {
+    name?: string;
+    deletedAt?: string | null;
+    workspace?: Pick<WorkspaceNodeWorkspace, 'description' | 'coverPath'>;
+  };
+
+  type DocumentUpdatePayload = {
+    name?: string;
+    deletedAt?: string | null;
+    document?: Pick<
+      WorkspaceNodeDocument,
+      'title' | 'subTitle' | 'draft' | 'manuscript'
+    >;
+  };
+
   interface Window {
     electronMeta?: {
       preloadReady: boolean;
@@ -82,7 +99,7 @@ declare global {
       getWorkspaceInfo: (targetPath: string) => Promise<WorkspaceNode>;
       updateWorkspaceInfo: (
         targetPath: string,
-        workspaceInfo: Partial<WorkspaceNode>,
+        workspaceInfo: WorkspaceUpdatePayload,
       ) => Promise<WorkspaceNode>;
 
       createDocument: (targetPath: string, name?: string) => Promise<WorkspaceNode>;
@@ -92,7 +109,7 @@ declare global {
       restoreDocument: (documentPath: string) => Promise<{ restored: boolean; path: string }>;
       updateDocument: (
         documentPath: string,
-        data: Partial<WorkspaceNode>,
+        data: DocumentUpdatePayload,
       ) => Promise<WorkspaceNode>;
 
       saveImage: (workflowPath: string, fileName: string, buffer: number[]) => Promise<string>;

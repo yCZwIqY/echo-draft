@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getDocument } from '~/lib/electron-api';
+import { getDocument } from '~/lib/electron/document-api';
 import { useSelectedWorkspace } from '~/stores/use-selected-workspace';
 import DocumentInfo from '~/features/manuscript/document-data/document-info';
 import { WorkspaceBreadcrumb } from '~/features';

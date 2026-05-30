@@ -1,13 +1,53 @@
 import path from 'node:path';
+import type {
+  StoredDocumentContent,
+  WorkspaceStore,
+  WorkspaceStoreDocument,
+  WorkspaceStoreGroup,
+  WorkspaceStoreRoot,
+} from './store-types.js';
 
-export function buildWorkspaceNode(entity, nodePath, parentPath, children = []) {
+export type WorkspaceNodeData = {
+  id: string;
+  type: 'workspace' | 'document';
+  name: string;
+  path: string;
+  parentPath: string;
+  parentId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  trashed: boolean;
+  workspace?: {
+    description: string;
+    coverPath: string;
+    deletedAt: string | null;
+  };
+  document?: {
+    title?: string;
+    subTitle?: string;
+    draft?: StoredDocumentContent['draft'];
+    manuscript?: StoredDocumentContent['manuscript'];
+    draftLength: number;
+    manuscriptLength: number;
+    deletedAt: string | null;
+  };
+  children?: WorkspaceNodeData[];
+};
+
+export function buildWorkspaceNode(
+  entity: WorkspaceStoreRoot | WorkspaceStoreGroup,
+  nodePath: string,
+  parentPath: string,
+  children: WorkspaceNodeData[] = [],
+): WorkspaceNodeData {
   return {
     id: entity.id,
     type: 'workspace',
     name: entity.name,
     path: nodePath,
     parentPath,
-    parentId: entity.parentId ?? null,
+    parentId: 'parentId' in entity ? entity.parentId : null,
     createdAt: entity.createdAt,
     updatedAt: entity.updatedAt,
     deletedAt: entity.deletedAt ?? null,
@@ -21,7 +61,12 @@ export function buildWorkspaceNode(entity, nodePath, parentPath, children = []) 
   };
 }
 
-export function buildDocumentNode(entity, nodePath, parentPath, content = undefined) {
+export function buildDocumentNode(
+  entity: WorkspaceStoreDocument,
+  nodePath: string,
+  parentPath: string,
+  content?: StoredDocumentContent,
+): WorkspaceNodeData {
   return {
     id: entity.id,
     type: 'document',
@@ -45,7 +90,7 @@ export function buildDocumentNode(entity, nodePath, parentPath, content = undefi
   };
 }
 
-export function buildEntityMaps(store) {
+export function buildEntityMaps(store: WorkspaceStore) {
   const groupsById = new Map(store.groups.map((group) => [group.id, group]));
   const documentsById = new Map(store.documents.map((document) => [document.id, document]));
 
@@ -55,7 +100,11 @@ export function buildEntityMaps(store) {
   };
 }
 
-export function buildGroupPath(workspacePath, groupsById, group) {
+export function buildGroupPath(
+  workspacePath: string,
+  groupsById: Map<string, WorkspaceStoreGroup>,
+  group: WorkspaceStoreGroup,
+) {
   const segments = [group.name];
   let cursor = group;
 
@@ -72,11 +121,11 @@ export function buildGroupPath(workspacePath, groupsById, group) {
   return path.join(workspacePath, ...segments);
 }
 
-export function buildNodeInfo(workspacePath, store) {
+export function buildNodeInfo(workspacePath: string, store: WorkspaceStore) {
   const { groupsById, documentsById } = buildEntityMaps(store);
-  const groupPathsById = new Map();
-  const nodeByPath = new Map();
-  const nodeById = new Map();
+  const groupPathsById = new Map<string, string>();
+  const nodeByPath = new Map<string, WorkspaceNodeData>();
+  const nodeById = new Map<string, WorkspaceNodeData>();
 
   for (const group of store.groups) {
     const groupPath = buildGroupPath(workspacePath, groupsById, group);
@@ -84,7 +133,7 @@ export function buildNodeInfo(workspacePath, store) {
   }
 
   for (const group of store.groups) {
-    const groupPath = groupPathsById.get(group.id);
+    const groupPath = groupPathsById.get(group.id) ?? workspacePath;
     const parentPath = group.parentId ? (groupPathsById.get(group.parentId) ?? workspacePath) : workspacePath;
     const node = buildWorkspaceNode(group, groupPath, parentPath);
 
@@ -110,7 +159,7 @@ export function buildNodeInfo(workspacePath, store) {
   };
 }
 
-export function buildRootWorkspaceNode(workspacePath, store) {
+export function buildRootWorkspaceNode(workspacePath: string, store: WorkspaceStore) {
   return buildWorkspaceNode(
     store.workspace,
     workspacePath,
@@ -118,10 +167,14 @@ export function buildRootWorkspaceNode(workspacePath, store) {
   );
 }
 
-export function buildTreeNodes(workspacePath, store, options = {}) {
+export function buildTreeNodes(
+  workspacePath: string,
+  store: WorkspaceStore,
+  options: { includeDeleted?: boolean } = {},
+) {
   const includeDeleted = options.includeDeleted ?? false;
   const { groupPathsById, groupsById } = buildNodeInfo(workspacePath, store);
-  const childrenByParentId = new Map();
+  const childrenByParentId = new Map<string, Array<WorkspaceStoreGroup | WorkspaceStoreDocument>>();
 
   for (const group of store.groups) {
     if (!includeDeleted && group.deletedAt) {
@@ -145,13 +198,13 @@ export function buildTreeNodes(workspacePath, store, options = {}) {
     childrenByParentId.set(key, currentChildren);
   }
 
-  const buildChildren = (parentId = '__root__') => {
+  const buildChildren = (parentId = '__root__'): WorkspaceNodeData[] => {
     const items = childrenByParentId.get(parentId) ?? [];
 
     return items
       .map((item) => {
         if (item.type === 'workspace') {
-          const itemPath = groupPathsById.get(item.id);
+          const itemPath = groupPathsById.get(item.id) ?? workspacePath;
           const parentPath = item.parentId ? (groupPathsById.get(item.parentId) ?? workspacePath) : workspacePath;
 
           return buildWorkspaceNode(item, itemPath, parentPath, buildChildren(item.id));
@@ -173,16 +226,16 @@ export function buildTreeNodes(workspacePath, store, options = {}) {
   return buildChildren();
 }
 
-export function buildTrashNodes(workspacePath, store) {
+export function buildTrashNodes(workspacePath: string, store: WorkspaceStore) {
   const { groupPathsById } = buildNodeInfo(workspacePath, store);
-  const items = [];
+  const items: WorkspaceNodeData[] = [];
 
   for (const group of store.groups) {
     if (!group.deletedAt) {
       continue;
     }
 
-    const groupPath = groupPathsById.get(group.id);
+    const groupPath = groupPathsById.get(group.id) ?? workspacePath;
     const parentPath = group.parentId ? (groupPathsById.get(group.parentId) ?? workspacePath) : workspacePath;
     items.push(buildWorkspaceNode(group, groupPath, parentPath));
   }
@@ -201,7 +254,7 @@ export function buildTrashNodes(workspacePath, store) {
   });
 }
 
-export function toRecentVisit(node) {
+export function toRecentVisit(node: WorkspaceNodeData) {
   return {
     id: node.id,
     type: node.type,

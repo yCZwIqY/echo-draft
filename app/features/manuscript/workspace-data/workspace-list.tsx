@@ -3,7 +3,8 @@ import { useSelectedWorkspace } from '~/stores/use-selected-workspace';
 import { AiOutlineFile, AiOutlineFolder } from 'react-icons/ai';
 import { showToast } from '~/lib/toast-manager';
 import ConfirmModalWrapper from '~/components/confirm-modal/confirm-modal-wrapper';
-import { removeDocument, removeWorkspace as removeWorkspaceItem } from '~/lib/electron-api';
+import { removeDocument } from '~/lib/electron/document-api';
+import { removeWorkspace as removeWorkspaceItem } from '~/lib/electron/workspace-api';
 
 interface Props {
   tree: WorkspaceNode[];

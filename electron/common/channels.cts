@@ -1,4 +1,4 @@
-module.exports = {
+const channels = {
   folder: {
     select: 'folder:select',
   },
@@ -36,3 +36,5 @@ module.exports = {
     updateDocument: 'document:update',
   }
 };
+
+export = channels;

@@ -9,7 +9,7 @@ const DEV_SERVER_URL = process.env.ELECTRON_RENDERER_URL ?? 'http://localhost:30
 const RETRY_DELAY_MS = 1000;
 const PRELOAD_PATH = path.resolve(__dirname, '../preload.cjs');
 
-function loadRenderer(mainWindow) {
+function loadRenderer(mainWindow: BrowserWindow) {
   mainWindow.loadURL(DEV_SERVER_URL).catch(() => {
     setTimeout(() => {
       if (!mainWindow.isDestroyed()) {
@@ -28,7 +28,6 @@ export function createMainWindow() {
       preload: PRELOAD_PATH,
       contextIsolation: true,
       sandbox: false,
-      enableRemoteModules: false,
     },
   });
 

@@ -4,11 +4,10 @@ import {
   getWorkspaceInfo,
   getWorkspaceTree,
   onWorkspaceTreeChanged,
-  purgeDocument,
   purgeWorkspace,
-  restoreDocument,
   restoreWorkspace,
-} from '~/lib/electron-api';
+} from '~/lib/electron/workspace-api';
+import { purgeDocument, restoreDocument } from '~/lib/electron/document-api';
 import { useSelectedWorkspace } from '~/stores/use-selected-workspace';
 import DnButton from '~/components/common/buttons/dn-button';
 import AddWorkspaceButton from '~/components/add-workspace-modal/add-workspace-button';

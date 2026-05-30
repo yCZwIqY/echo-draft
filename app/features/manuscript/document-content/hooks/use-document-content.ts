@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { updateDocument } from '~/lib/electron-api';
+import { updateDocument } from '~/lib/electron/document-api';
 
 type DocumentTextStatus = {
   charsWithSpaces: number;

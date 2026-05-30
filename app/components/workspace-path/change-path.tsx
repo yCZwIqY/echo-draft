@@ -1,5 +1,5 @@
 import { Tooltip } from 'jy-headless';
-import { selectWorkspacePath } from '~/lib/electron-api';
+import { selectWorkspacePath } from '~/lib/electron/workspace-api';
 
 interface Props {
   label?: string;

@@ -4,7 +4,7 @@ import DnInput from '~/components/common/inputs/dn-input';
 import { type ReactNode, useEffect, useState } from 'react';
 import DnButton from '~/components/common/buttons/dn-button';
 import { showToast } from '~/lib/toast-manager';
-import { createDocument } from '~/lib/electron-api';
+import { createDocument } from '~/lib/electron/document-api';
 import { AiOutlineFolderOpen } from 'react-icons/ai';
 import { CiFileOn } from 'react-icons/ci';
 

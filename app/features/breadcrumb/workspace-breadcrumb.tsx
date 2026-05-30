@@ -3,11 +3,8 @@ import { useNavigate } from 'react-router';
 import Breadcrumb, { type BreadcrumbItem } from './breadcrumb';
 import { useSelectedWorkspace } from '~/stores/use-selected-workspace';
 import { useWorkspacePath } from '~/hooks';
-import {
-  getWorkspaceInfo,
-  removeDocument,
-  removeWorkspace as removeWorkspaceItem,
-} from '~/lib/electron-api';
+import { removeDocument } from '~/lib/electron/document-api';
+import { getWorkspaceInfo, removeWorkspace as removeWorkspaceItem } from '~/lib/electron/workspace-api';
 import ConfirmModalWrapper from '~/components/confirm-modal/confirm-modal-wrapper';
 import { showToast } from '~/lib/toast-manager';
 

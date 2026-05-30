@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
-import { registerIpcHandlers } from './ipc/index.mjs';
-import { createMainWindow } from './windows/main-window.mjs';
+import { registerIpcHandlers } from './ipc/index.js';
+import { createMainWindow } from './windows/main-window.js';
 
 registerIpcHandlers(app);
 

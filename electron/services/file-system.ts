@@ -1,15 +1,32 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const DEFAULT_IGNORE_FILES = ['workspace-info.json', 'workspace.json', 'documents', 'images'];
+const DEFAULT_IGNORE_FILES = [
+  'echo-draft.sqlite',
+  'scripts',
+  'images',
+];
 
-export async function ensureDirectory(dirPath) {
+export type DirectoryTreeNode = {
+  name: string;
+  path: string;
+  type: 'workspace' | 'document';
+  children?: DirectoryTreeNode[];
+};
+
+type ReadDirectoryTreeOptions = {
+  maxDepth?: number;
+  currentDepth?: number;
+  ignore?: string[];
+};
+
+export async function ensureDirectory(dirPath: string) {
   await fs.mkdir(dirPath, {
     recursive: true,
   });
 }
 
-export async function pathExists(targetPath) {
+export async function pathExists(targetPath: string) {
   try {
     await fs.access(targetPath);
     return true;
@@ -18,11 +35,14 @@ export async function pathExists(targetPath) {
   }
 }
 
-export async function readTextFile(filePath) {
+export async function readTextFile(filePath: string) {
   return fs.readFile(filePath, 'utf8');
 }
 
-export async function readDirectoryTree(dirPath, options = {}) {
+export async function readDirectoryTree(
+  dirPath: string,
+  options: ReadDirectoryTreeOptions = {},
+): Promise<DirectoryTreeNode[]> {
   const maxDepth = options.maxDepth ?? 5;
   const currentDepth = options.currentDepth ?? 0;
   const ignore = [...DEFAULT_IGNORE_FILES, ...(options.ignore ?? [])];
@@ -35,7 +55,7 @@ export async function readDirectoryTree(dirPath, options = {}) {
     withFileTypes: true,
   });
 
-  const nodes = [];
+  const nodes: DirectoryTreeNode[] = [];
 
   for (const entry of entries) {
     if (ignore.includes(entry.name)) {
@@ -76,7 +96,7 @@ export async function readDirectoryTree(dirPath, options = {}) {
   });
 }
 
-export async function copyFileToDirectory(sourcePath, targetDir) {
+export async function copyFileToDirectory(sourcePath: string, targetDir: string) {
   await fs.mkdir(targetDir, { recursive: true });
 
   const fileName = path.basename(sourcePath);
@@ -87,6 +107,6 @@ export async function copyFileToDirectory(sourcePath, targetDir) {
   return targetPath;
 }
 
-export async function deleteFile(targetPath) {
+export async function deleteFile(targetPath: string) {
   await fs.rm(targetPath, { recursive: true });
 }

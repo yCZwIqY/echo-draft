@@ -1,13 +1,8 @@
 import { useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 import { AiOutlineCalendar, AiOutlineClockCircle } from 'react-icons/ai';
-import {
-  readImage,
-  removeFile,
-  saveImage,
-  showInFolder,
-  updateWorkspaceInfo,
-} from '~/lib/electron-api';
+import { readImage, removeFile, saveImage, showInFolder } from '~/lib/electron/file-api';
+import { updateWorkspaceInfo } from '~/lib/electron/workspace-api';
 import DnButton from '~/components/common/buttons/dn-button';
 import DnInput from '~/components/common/inputs/dn-input';
 import { formatDate } from '../../../../utils/date-utils';
@@ -68,14 +63,13 @@ const WorkspaceSummary = ({ workspaceData, onUpdated }: Props) => {
     }
     const updatedWorkspace = await updateWorkspaceInfo(workspaceData?.path, {
       workspace: {
-        ...workspaceData.workspace,
         coverPath: newCoverPath,
       },
     });
     onUpdated?.(updatedWorkspace);
   };
 
-  const handleUpdateWorkspaceData = async (data: Partial<WorkspaceNode>) => {
+  const handleUpdateWorkspaceData = async (data: WorkspaceUpdatePayload) => {
     if (!workspaceData?.path) {
       return;
     }
@@ -176,7 +170,6 @@ const WorkspaceSummary = ({ workspaceData, onUpdated }: Props) => {
             onBlur={() =>
               handleUpdateWorkspaceData({
                 workspace: {
-                  ...workspaceData?.workspace,
                   description,
                 },
               })

@@ -2,7 +2,7 @@ import { Link } from 'react-router';
 import AddWorkspaceButton from '~/components/add-workspace-modal/add-workspace-button';
 import { useWorkspacePath } from '~/hooks';
 import { useEffect, useState } from 'react';
-import { getWorkspaceTree, onWorkspaceTreeChanged } from '~/lib/electron-api';
+import { getWorkspaceTree, onWorkspaceTreeChanged } from '~/lib/electron/workspace-api';
 import SideBarItem from '~/features/side-bar/side-bar-item';
 import { AiOutlineLeft, AiOutlineMenu, AiOutlinePlus, AiOutlineSetting } from 'react-icons/ai';
 import DnIconButton from '~/components/common/buttons/dn-icon-button';

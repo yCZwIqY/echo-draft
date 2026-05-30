@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 
 import {
-  createWorkspace,
   getElectronMeta,
-  initCurrentWorkspace,
   isElectronReady,
+} from '~/lib/electron/client';
+import {
+  createWorkspace,
+  initCurrentWorkspace,
   selectWorkspacePath,
   updateWorkspaceRootPath,
-} from '~/lib/electron-api';
+} from '~/lib/electron/workspace-api';
 
 export function useWorkspacePath() {
   const [workspacePath, setWorkspacePath] = useState('');

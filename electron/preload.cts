@@ -1,0 +1,83 @@
+import type { IpcRendererEvent } from 'electron';
+
+const { contextBridge, ipcRenderer } = require('electron') as typeof import('electron');
+const channels = require('./common/channels.cjs');
+type WorkspaceUpdatePayload = Record<string, unknown>;
+type DocumentUpdatePayload = Record<string, unknown>;
+
+contextBridge.exposeInMainWorld('electronMeta', {
+  preloadReady: true,
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const replaceText = (selector: string, text: string) => {
+    const element = document.getElementById(selector);
+    if (element) {
+      element.innerText = text;
+    }
+  };
+
+  for (const dependency of ['chrome', 'node', 'electron']) {
+    replaceText(`${dependency}-version`, process.versions[dependency] ?? '');
+  }
+});
+
+const fileApi = {
+  selectFolder: () => ipcRenderer.invoke(channels.folder.select),
+  readFile: (filePath: string) => ipcRenderer.invoke(channels.file.read, filePath),
+  readImage: (filePath: string) => ipcRenderer.invoke(channels.file.readImage, filePath),
+  saveImage: (workflowPath: string, fileName: string, buffer: number[]) =>
+    ipcRenderer.invoke(channels.file.saveImage, workflowPath, fileName, buffer),
+  removeFile: (filePath: string) => ipcRenderer.invoke(channels.file.remove, filePath),
+  showInFolder: (filePath: string) => ipcRenderer.invoke(channels.file.showInFolder, filePath),
+};
+
+const workspaceApi = {
+  getWorkspaceTree: (targetPath?: string) =>
+    ipcRenderer.invoke(channels.workspace.getWorkspaceTree, targetPath),
+  getTrashItems: () => ipcRenderer.invoke(channels.workspace.getTrashItems),
+  onWorkspaceTreeChanged: (listener: () => void) => {
+    const wrappedListener = (_event: IpcRendererEvent) => listener();
+    ipcRenderer.on(channels.workspace.treeChanged, wrappedListener);
+
+    return () => {
+      ipcRenderer.removeListener(channels.workspace.treeChanged, wrappedListener);
+    };
+  },
+  getCurrentWorkspacePath: () => ipcRenderer.invoke(channels.workspace.getCurrentPath),
+  initCurrentWorkspace: () => ipcRenderer.invoke(channels.workspace.initCurrent),
+  selectWorkspacePath: () => ipcRenderer.invoke(channels.workspace.selectPath),
+  resetWorkspacePath: () => ipcRenderer.invoke(channels.workspace.resetPath),
+  updateWorkspaceRoot: (targetPath: string) =>
+    ipcRenderer.invoke(channels.workspace.updateRoot, targetPath),
+  createWorkspace: (name: string) => ipcRenderer.invoke(channels.workspace.createWorkspace, name),
+  renameWorkspace: (oldWorkspacePath: string, newName: string) =>
+    ipcRenderer.invoke(channels.workspace.renameWorkspace, oldWorkspacePath, newName),
+  removeWorkspace: (targetPath: string) =>
+    ipcRenderer.invoke(channels.workspace.removeWorkspace, targetPath),
+  purgeWorkspace: (targetPath: string) =>
+    ipcRenderer.invoke(channels.workspace.purgeWorkspace, targetPath),
+  restoreWorkspace: (targetPath: string) =>
+    ipcRenderer.invoke(channels.workspace.restoreWorkspace, targetPath),
+  getWorkspaceInfo: (targetPath: string) =>
+    ipcRenderer.invoke(channels.workspace.getWorkspaceInfo, targetPath),
+  updateWorkspaceInfo: (targetPath: string, workspaceInfo: WorkspaceUpdatePayload) =>
+    ipcRenderer.invoke(channels.workspace.updateWorkspaceInfo, targetPath, workspaceInfo),
+};
+
+const documentApi = {
+  createDocument: (workspacePath: string, name?: string) =>
+    ipcRenderer.invoke(channels.document.createDocument, workspacePath, name),
+  getDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.getDocument, documentPath),
+  removeDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.removeDocument, documentPath),
+  purgeDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.purgeDocument, documentPath),
+  restoreDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.restoreDocument, documentPath),
+  updateDocument: (documentPath: string, data: DocumentUpdatePayload) =>
+    ipcRenderer.invoke(channels.document.updateDocument, documentPath, data),
+};
+
+contextBridge.exposeInMainWorld('electronAPI', {
+  ...fileApi,
+  ...workspaceApi,
+  ...documentApi,
+});

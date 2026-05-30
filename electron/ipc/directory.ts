@@ -3,7 +3,7 @@ import path from 'node:path';
 import fs from 'node:fs/promises';
 
 import channels from '../common/channels.cjs';
-import { readDirectoryTree, readTextFile } from '../services/file-system.mjs';
+import { readDirectoryTree, readTextFile } from '../services/file-system.js';
 
 export function registerDirectoryIpcHandlers() {
   ipcMain.handle(channels.folder.select, async () => {

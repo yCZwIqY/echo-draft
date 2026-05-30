@@ -1,16 +1,20 @@
 import fs from 'node:fs';
 
-import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { BrowserWindow, dialog, ipcMain, shell, type App } from 'electron';
 
 import channels from '../common/channels.cjs';
-import { ensureDirectory } from '../services/file-system.mjs';
-import { createWorkspaceService } from '../services/workspace-service.mjs';
+import { ensureDirectory } from '../services/file-system.js';
+import { parseWorkspaceUpdatePayload } from '../services/workspace/payloads.js';
+import type { createWorkspaceService } from '../services/workspace-service.js';
+import { optionalString, requireNumberArray, requireString } from './ipc-guards.js';
 
-export function registerWorkspaceIpcHandlers(app) {
-  const workspaceService = createWorkspaceService(app);
-  let workspaceWatcher = null;
-  let watchedWorkspacePath = null;
-  let notifyTreeChangedTimer = null;
+export function registerWorkspaceIpcHandlers(
+  app: App,
+  workspaceService: ReturnType<typeof createWorkspaceService>,
+) {
+  let workspaceWatcher: fs.FSWatcher | null = null;
+  let watchedWorkspacePath: string | null = null;
+  let notifyTreeChangedTimer: NodeJS.Timeout | null = null;
 
   function broadcastWorkspaceTreeChanged() {
     for (const window of BrowserWindow.getAllWindows()) {
@@ -37,7 +41,7 @@ export function registerWorkspaceIpcHandlers(app) {
     watchedWorkspacePath = null;
   }
 
-  function startWorkspaceWatcher(workspacePath) {
+  function startWorkspaceWatcher(workspacePath: string) {
     if (!workspacePath || watchedWorkspacePath === workspacePath) {
       return;
     }
@@ -61,10 +65,10 @@ export function registerWorkspaceIpcHandlers(app) {
     watchedWorkspacePath = workspacePath;
   }
 
-  ipcMain.handle(channels.workspace.getWorkspaceTree, async (_, path) => {
+  ipcMain.handle(channels.workspace.getWorkspaceTree, async (_, targetPath) => {
     const rootWorkspace = await workspaceService.getCurrentWorkspaceInfo();
     startWorkspaceWatcher(rootWorkspace.path);
-    return workspaceService.getWorkspaceTree(path);
+    return workspaceService.getWorkspaceTree(optionalString(targetPath, 'targetPath'));
   });
 
   ipcMain.handle(channels.workspace.getCurrentPath, async () => {
@@ -105,44 +109,47 @@ export function registerWorkspaceIpcHandlers(app) {
   });
 
   ipcMain.handle(channels.workspace.createWorkspace, async (_, name) => {
-    const workspace = await workspaceService.createWorkspace(name);
+    const workspace = await workspaceService.createWorkspace(requireString(name, 'name'));
     scheduleWorkspaceTreeChanged();
     return workspace;
   });
 
   ipcMain.handle(channels.workspace.renameWorkspace, async (_, oldWorkspacePath, newName) => {
-    const workspace = await workspaceService.renameWorkspace(oldWorkspacePath, newName);
+    const workspace = await workspaceService.renameWorkspace(
+      requireString(oldWorkspacePath, 'oldWorkspacePath'),
+      requireString(newName, 'newName'),
+    );
     scheduleWorkspaceTreeChanged();
     return workspace;
   });
 
   ipcMain.handle(channels.workspace.removeWorkspace, async (_, targetPath) => {
-    const result = await workspaceService.removeWorkspace(targetPath);
+    const result = await workspaceService.removeWorkspace(requireString(targetPath, 'targetPath'));
     scheduleWorkspaceTreeChanged();
     return result;
   });
 
   ipcMain.handle(channels.workspace.purgeWorkspace, async (_, targetPath) => {
-    const result = await workspaceService.purgeWorkspace(targetPath);
+    const result = await workspaceService.purgeWorkspace(requireString(targetPath, 'targetPath'));
     scheduleWorkspaceTreeChanged();
     return result;
   });
 
   ipcMain.handle(channels.workspace.restoreWorkspace, async (_, targetPath) => {
-    const result = await workspaceService.restoreWorkspace(targetPath);
+    const result = await workspaceService.restoreWorkspace(requireString(targetPath, 'targetPath'));
     scheduleWorkspaceTreeChanged();
     return result;
   });
 
-  ipcMain.handle(channels.workspace.updateRoot, async (_, name) => {
-    const workspaceInfo = await workspaceService.updateRoot(name);
+  ipcMain.handle(channels.workspace.updateRoot, async (_, targetPath) => {
+    const workspaceInfo = await workspaceService.updateRoot(requireString(targetPath, 'targetPath'));
     startWorkspaceWatcher(workspaceInfo.path);
     scheduleWorkspaceTreeChanged();
     return workspaceInfo;
   });
 
   ipcMain.handle(channels.workspace.getWorkspaceInfo, async (_, targetPath) => {
-    const data = await workspaceService.getWorkflowInfo(targetPath);
+    const data = await workspaceService.getWorkflowInfo(requireString(targetPath, 'targetPath'));
     return data;
   });
 
@@ -151,7 +158,10 @@ export function registerWorkspaceIpcHandlers(app) {
   });
 
   ipcMain.handle(channels.workspace.updateWorkspaceInfo, async (_, targetPath, workflowInfo) => {
-    const data = await workspaceService.updateWorkspaceInfo(targetPath, workflowInfo);
+    const data = await workspaceService.updateWorkspaceInfo(
+      requireString(targetPath, 'targetPath'),
+      parseWorkspaceUpdatePayload(workflowInfo),
+    );
     return data;
   });
 
@@ -164,18 +174,23 @@ export function registerWorkspaceIpcHandlers(app) {
   });
 
   ipcMain.handle(channels.file.saveImage, async (_, workflowPath, fileName, buffer) => {
-    return workspaceService.saveImage(workflowPath, fileName, buffer);
+    return workspaceService.saveImage(
+      requireString(workflowPath, 'workflowPath'),
+      requireString(fileName, 'fileName'),
+      requireNumberArray(buffer, 'buffer'),
+    );
   });
 
   ipcMain.handle(channels.file.remove, async (_, filePath) => {
-    await workspaceService.removeFile(filePath);
+    await workspaceService.removeFile(requireString(filePath, 'filePath'));
   });
 
   ipcMain.handle(channels.file.showInFolder, async (_, filePath) => {
-    const targetPath = workspaceService.toFileSystemPath(filePath);
+    const inputPath = requireString(filePath, 'filePath');
+    const targetPath = workspaceService.toFileSystemPath(inputPath);
 
-    console.log('[showInFolder] input:', filePath.slice(0,100));
-    console.log('[showInFolder] target:', targetPath.slice(0,100));
+    console.log('[showInFolder] input:', inputPath.slice(0, 100));
+    console.log('[showInFolder] target:', targetPath.slice(0, 100));
 
     shell.showItemInFolder(targetPath);
 

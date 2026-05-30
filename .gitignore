@@ -5,6 +5,7 @@
 # React Router
 /.react-router/
 /build/
+/dist-electron/
 
 .idea
 .codex
