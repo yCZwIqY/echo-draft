@@ -71,6 +71,26 @@ declare global {
     >;
   };
 
+  type GenerateCommentsPayload = {
+    documentPath: string;
+    startAge: number;
+    endAge: number;
+    expertise: number;
+    gender: number;
+    count: number;
+  };
+
+  type GeneratedComment = {
+    ageGroup: number;
+    gender: 'male' | 'female';
+    expertiseLevel: number;
+    expertiseLabel: string;
+    content: string;
+    tone: string;
+    usedContext: boolean;
+  };
+
+
   interface Window {
     electronMeta?: {
       preloadReady: boolean;
@@ -119,6 +139,8 @@ declare global {
 
       indexDocument: (documentPath: string) => Promise<{ documentId: string; chunks: number }>;
       searchDocuments: (query: string, limit?: number) => Promise<unknown[]>;
+
+      generateComments: (payload: GenerateCommentsPayload) => Promise<GeneratedComment[]>;
     };
   }
 }

@@ -43,6 +43,9 @@ const channels = {
   embedding: {
     indexDocument: 'embedding:index',
     searchDocument: 'embedding:search',
+  },
+  comment: {
+    generateComments: 'comment:generateComments',
   }
 };
 

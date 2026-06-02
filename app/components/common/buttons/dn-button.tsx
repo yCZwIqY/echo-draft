@@ -1,12 +1,14 @@
 import type { ButtonHTMLAttributes } from 'react';
 import type { FontWeight, Rounded, Size, Variants } from '~/components';
 import { tv } from 'tailwind-variants/lite';
+import { FaSpinner } from 'react-icons/fa';
 
 interface Props extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'size'> {
-  variant?: Variants | 'red' | 'red-outline';
+  variant?: Variants | 'red' | 'red-outline' | 'disabled';
   size?: Size;
   fontWeight?: FontWeight;
   rounded?: Rounded;
+  loading?: boolean;
 }
 
 const styles = tv({
@@ -21,6 +23,7 @@ const styles = tv({
       red: 'bg-red-700 text-white hover:bg-red-800 active:bg-red-900 focus:outline-red-500 outline-1',
       'red-outline':
         'border border-red-600 text-red-600 hover:bg-red-100/500 active:bg-red-100 focus:outline-red-500 outline-1',
+      disabled: 'bg-gray-200 text-gray-400 focus:outline-none',
     },
     size: {
       s: 'h-7 typo-b6-b px-2',
@@ -46,14 +49,29 @@ const DnButton = ({
   size = 'm',
   fontWeight = 'bold',
   rounded = 'm',
+  disabled,
   className,
+  loading = false,
+  children,
   ...rest
 }: Props) => {
   return (
     <button
       {...rest}
-      className={`${styles({ variant, size, fontWeight, rounded })} ${className}`}
-    />
+      disabled={disabled || loading}
+      className={`${styles({ variant: disabled ? 'disabled' : variant, size, fontWeight, rounded })} ${className}`}
+    >
+      {loading ? (
+        <div>
+          <FaSpinner
+            fontSize={'100%'}
+            className={'animate-[spin_3s_linear_infinite]'}
+          />
+        </div>
+      ) : (
+        children
+      )}
+    </button>
   );
 };
 

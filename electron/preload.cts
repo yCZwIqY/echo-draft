@@ -4,6 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron') as typeof import('ele
 const channels = require('./common/channels.cjs');
 type WorkspaceUpdatePayload = Record<string, unknown>;
 type DocumentUpdatePayload = Record<string, unknown>;
+type GenerateCommentsPayload = Record<string, unknown>;
 
 contextBridge.exposeInMainWorld('electronMeta', {
   preloadReady: true,
@@ -95,10 +96,16 @@ const embeddingApi = {
     ipcRenderer.invoke(channels.embedding.searchDocument, query, limit),
 };
 
+const commentApi = {
+  generateComments: (payload: GenerateCommentsPayload) =>
+    ipcRenderer.invoke(channels.comment.generateComments, payload),
+};
+
 contextBridge.exposeInMainWorld('electronAPI', {
   ...fileApi,
   ...workspaceApi,
   ...documentApi,
   ...settingApi,
   ...embeddingApi,
+  ...commentApi,
 });

@@ -12,9 +12,6 @@ import { readDocumentContent } from '../workspace/store.js';
 
 export function createDocumentEmbeddingAction(context: WorkspaceServiceContext) {
   async function indexDocument(documentPath: string) {
-
-    console.log('createDocumentEmbeddingAction - indexDocument');
-
     const { workspacePath, node } = await context.getStoreNodeByPath(documentPath);
 
     if (!node || node.type !== 'document') {
@@ -56,6 +53,7 @@ export function createDocumentEmbeddingAction(context: WorkspaceServiceContext) 
         chunkIndex: chunk.chunkIndex,
         vector: embeddings[index],
         updatedAt: now(),
+        parentPath: node.parentPath,
       })) ?? [];
 
     await replaceDocumentEmbedding(workspacePath, node.id, rows);

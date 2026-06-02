@@ -5,6 +5,7 @@ import { createWorkspaceActions } from './workspace-actions.js';
 import { createWorkspaceServiceContext } from './workspace-service-context.js';
 import type { App } from 'electron';
 import { createDocumentEmbeddingAction } from './embedding/document-embedding-action.js';
+import { createCommentGenerationActions } from './comment/comment-generation-actions.js';
 
 export function createWorkspaceService(app: Pick<App, 'getPath'>) {
   const context = createWorkspaceServiceContext(app);
@@ -13,6 +14,7 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
   const fileActions = createFileActions(context);
   const settingActions = createSettingActions(context);
   const documentEmbeddingAction = createDocumentEmbeddingAction(context);
+  const commentGenerationActions = createCommentGenerationActions(context);
 
   return {
     addRecentVisit: context.addRecentVisit,
@@ -51,5 +53,7 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
     indexDocument: documentEmbeddingAction.indexDocument,
     searchDocuments: documentEmbeddingAction.searchDocuments,
 
+    //commentGenerationActions
+    generateComments: commentGenerationActions.generateComments,
   };
 }

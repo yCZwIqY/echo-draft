@@ -6,11 +6,21 @@ export type DocumentEmbeddingRow = {
   id: string;
   documentId: string;
   documentPath: string;
+  parentPath: string;
   title: string;
   content: string;
   chunkIndex: number;
   vector: number[];
   updatedAt: string;
+};
+
+export type DocumentEmbeddingSearchResult = Omit<DocumentEmbeddingRow, 'vector'> & {
+  distance: number | null;
+};
+
+type LanceDbSearchRow = Partial<DocumentEmbeddingRow> & {
+  _distance?: number;
+  _score?: number;
 };
 
 export function getLanceDbPath(workspacePath: string) {
@@ -65,5 +75,38 @@ export async function searchDocumentEmbeddings(
   const table = await getDocumentEmbeddingsTable(workspacePath);
   if (!table) return [];
 
-  return table.search(vector).limit(limit).toArray();
+  const rows = (await table.search(vector).limit(limit).toArray()) as LanceDbSearchRow[];
+
+  return rows.map(toSearchResult);
+}
+
+export async function findDocumentEmbeddingsByParentPath(
+  workspacePath: string,
+  parentPath: string,
+  limit = 10,
+) {
+  const table = await getDocumentEmbeddingsTable(workspacePath);
+  if (!table) return [];
+
+  const rows = (await table
+    .query()
+    .where(`documentPath LIKE '${parentPath.replaceAll("'", "''")}%'`)
+    .limit(limit)
+    .toArray()) as LanceDbSearchRow[];
+
+  return rows.map(toSearchResult);
+}
+
+function toSearchResult(row: LanceDbSearchRow): DocumentEmbeddingSearchResult {
+  return {
+    id: String(row.id ?? ''),
+    documentId: String(row.documentId ?? ''),
+    documentPath: String(row.documentPath ?? ''),
+    parentPath: String(row.parentPath ?? ''),
+    title: String(row.title ?? ''),
+    content: String(row.content ?? ''),
+    chunkIndex: Number(row.chunkIndex ?? 0),
+    updatedAt: String(row.updatedAt ?? ''),
+    distance: typeof row._distance === 'number' ? row._distance : null,
+  };
 }

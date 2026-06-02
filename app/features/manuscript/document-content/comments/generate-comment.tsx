@@ -4,6 +4,7 @@ import { DnRangeSlider } from '~/components/common/slider';
 import { DnChipGroup } from '~/components/common/chip-group';
 import DnButton from '~/components/common/buttons/dn-button';
 import { RxDoubleArrowDown } from 'react-icons/rx';
+import { generateComments } from '~/lib/electron/comment-api';
 
 const EXPERTISE_LABEL: Record<number, string> = {
   0: '입문 독자',
@@ -24,16 +25,39 @@ const COMMENT_COUNT_OPTIONS = [
   { label: '5개', value: 5 },
   { label: '10개', value: 10 },
   { label: '30개', value: 30 },
+  { label: '50개', value: 50 },
 ];
 
-const GenerateComment = () => {
+interface Props {
+  documentPath: string;
+  onGenerated?: (comments: GeneratedComment[]) => void;
+}
+
+const GenerateComment = ({ documentPath, onGenerated }: Props) => {
   const [startAge, setStartAge] = useState<number>(10);
   const [endAge, setEndAge] = useState<number>(20);
   const [expertise, setExpertise] = useState<number>(0);
   const [gender, setGender] = useState(50);
   const [count, setCount] = useState(10);
 
+  const [loading, setLoading] = useState(false);
+
   const [open, setOpen] = useState<boolean>(false);
+
+  const handleGenerate = async () => {
+    setLoading(true);
+    const comments = await generateComments({
+      documentPath,
+      startAge,
+      endAge,
+      expertise,
+      gender,
+      count,
+    });
+
+    onGenerated?.(comments);
+    setLoading(false);
+  };
 
   return (
     <div className={'rounded-xl border border-stone-200 bg-white/90 p-6 shadow-sm'}>
@@ -49,11 +73,15 @@ const GenerateComment = () => {
         <DnButton
           className={''}
           variant={'outlined'}
+          loading={loading}
+          onClick={handleGenerate}
         >
           댓글 생성
         </DnButton>
       </div>
-      <div className={`flex flex-col gap-6 overflow-hidden transition-all ${open ? 'h-[480px]' : 'h-0'}`}>
+      <div
+        className={`flex flex-col gap-6 overflow-hidden transition-all ${open ? 'h-[480px]' : 'h-0'}`}
+      >
         <div className={'flex flex-col gap-3 px-2'}>
           <div className={'flex items-center justify-between gap-3'}>
             <div>

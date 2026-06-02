@@ -4,7 +4,6 @@ import DnSwitch from '~/components/common/switch/dn-switch';
 import type { Option } from '~/components';
 import DnButton from '~/components/common/buttons/dn-button';
 import { showToast } from '~/lib/toast-manager';
-import GenerateComment from '~/features/manuscript/document-content/comments/generate-comment';
 import Comments from '~/features/manuscript/document-content/comments/comments';
 import { useDocumentContent } from '~/features/manuscript/document-content/hooks';
 import { indexDocument } from '~/lib/electron/embedding-api';
@@ -141,8 +140,7 @@ export const DocumentContent = ({ workspaceData, onUpdated }: Props) => {
         </DnButton>
       </div>
       <div className={'flex flex-col gap-2'}>
-        <GenerateComment />
-        <Comments />
+        <Comments documentPath={workspaceData.path} key={workspaceData.id} />
       </div>
     </div>
   );
