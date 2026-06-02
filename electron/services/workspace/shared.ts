@@ -27,7 +27,10 @@ export function mergeRecentVisits(
   visit: WorkspaceStoreRecentVisit,
   max = 10,
 ) {
-  return [visit, ...recentVisits.filter((item) => item?.path !== visit.path)].slice(0, max);
+  return [
+    visit,
+    ...recentVisits.filter((item) => item?.id !== visit.id && item?.path !== visit.path),
+  ].slice(0, max);
 }
 
 export function sanitizeNodeName(name: string) {

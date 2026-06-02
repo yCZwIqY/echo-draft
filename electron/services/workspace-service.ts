@@ -4,6 +4,7 @@ import { createSettingActions } from './setting-actions.js';
 import { createWorkspaceActions } from './workspace-actions.js';
 import { createWorkspaceServiceContext } from './workspace-service-context.js';
 import type { App } from 'electron';
+import { createDocumentEmbeddingAction } from './embedding/document-embedding-action.js';
 
 export function createWorkspaceService(app: Pick<App, 'getPath'>) {
   const context = createWorkspaceServiceContext(app);
@@ -11,6 +12,7 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
   const documentActions = createDocumentActions(context);
   const fileActions = createFileActions(context);
   const settingActions = createSettingActions(context);
+  const documentEmbeddingAction = createDocumentEmbeddingAction(context);
 
   return {
     addRecentVisit: context.addRecentVisit,
@@ -44,5 +46,10 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
     updateSelectedLLMModel: settingActions.updateSelectedLLMModel,
     updateWorkflowInfo: workspaceActions.updateWorkflowInfo,
     updateWorkspaceInfo: workspaceActions.updateWorkspaceInfo,
+
+    //documentEmbeddingAction
+    indexDocument: documentEmbeddingAction.indexDocument,
+    searchDocuments: documentEmbeddingAction.searchDocuments,
+
   };
 }

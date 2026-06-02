@@ -4,6 +4,7 @@ import { registerWorkspaceIpcHandlers } from './workspace.js';
 import { registerDocumentIpcHandlers } from './document.js';
 import { createWorkspaceService } from '../services/workspace-service.js';
 import type { App } from 'electron';
+import { registerEmbeddingIPCHandler } from './embedding.js';
 
 export function registerIpcHandlers(app: App) {
   const workspaceService = createWorkspaceService(app);
@@ -12,4 +13,5 @@ export function registerIpcHandlers(app: App) {
   registerWorkspaceIpcHandlers(app, workspaceService);
   registerDocumentIpcHandlers(workspaceService);
   registerSettingIpcHandlers(workspaceService);
+  registerEmbeddingIPCHandler(workspaceService);
 }

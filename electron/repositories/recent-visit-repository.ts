@@ -25,11 +25,17 @@ export function createRecentVisitRepository(db: sqlite3.Database) {
           continue;
         }
 
-        await run(db, 'INSERT INTO recent_visits (id, sortOrder, payload) VALUES (?, ?, ?)', [
-          visit.id,
-          index,
-          JSON.stringify(visit),
-        ]);
+        await run(
+          db,
+          `
+            INSERT INTO recent_visits (id, sortOrder, payload)
+            VALUES (?, ?, ?)
+            ON CONFLICT(id) DO UPDATE SET
+              sortOrder = excluded.sortOrder,
+              payload = excluded.payload
+          `,
+          [visit.id, index, JSON.stringify(visit)],
+        );
       }
     },
 

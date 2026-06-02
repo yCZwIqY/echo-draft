@@ -68,10 +68,14 @@ const workspaceApi = {
 const documentApi = {
   createDocument: (workspacePath: string, name?: string) =>
     ipcRenderer.invoke(channels.document.createDocument, workspacePath, name),
-  getDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.getDocument, documentPath),
-  removeDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.removeDocument, documentPath),
-  purgeDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.purgeDocument, documentPath),
-  restoreDocument: (documentPath: string) => ipcRenderer.invoke(channels.document.restoreDocument, documentPath),
+  getDocument: (documentPath: string) =>
+    ipcRenderer.invoke(channels.document.getDocument, documentPath),
+  removeDocument: (documentPath: string) =>
+    ipcRenderer.invoke(channels.document.removeDocument, documentPath),
+  purgeDocument: (documentPath: string) =>
+    ipcRenderer.invoke(channels.document.purgeDocument, documentPath),
+  restoreDocument: (documentPath: string) =>
+    ipcRenderer.invoke(channels.document.restoreDocument, documentPath),
   updateDocument: (documentPath: string, data: DocumentUpdatePayload) =>
     ipcRenderer.invoke(channels.document.updateDocument, documentPath, data),
 };
@@ -84,9 +88,17 @@ const settingApi = {
     ipcRenderer.invoke(channels.setting.updateSelectedLLMModel, selectedLLMModel),
 };
 
+const embeddingApi = {
+  indexDocument: (targetPath: string) =>
+    ipcRenderer.invoke(channels.embedding.indexDocument, targetPath),
+  searchDocuments: (query: string, limit?: number) =>
+    ipcRenderer.invoke(channels.embedding.searchDocument, query, limit),
+};
+
 contextBridge.exposeInMainWorld('electronAPI', {
   ...fileApi,
   ...workspaceApi,
   ...documentApi,
   ...settingApi,
+  ...embeddingApi,
 });

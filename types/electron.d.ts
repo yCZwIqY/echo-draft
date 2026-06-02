@@ -107,20 +107,18 @@ declare global {
       removeDocument: (documentPath: string) => Promise<{ removed: boolean; path: string }>;
       purgeDocument: (documentPath: string) => Promise<{ removed: boolean; path: string }>;
       restoreDocument: (documentPath: string) => Promise<{ restored: boolean; path: string }>;
-      updateDocument: (
-        documentPath: string,
-        data: DocumentUpdatePayload,
-      ) => Promise<WorkspaceNode>;
+      updateDocument: (documentPath: string, data: DocumentUpdatePayload) => Promise<WorkspaceNode>;
 
       getSettingInfo: () => Promise<Setting>;
-      updateSelectedEmbeddingModel: (
-        selectedEmbeddingModel: string | null,
-      ) => Promise<Setting>;
+      updateSelectedEmbeddingModel: (selectedEmbeddingModel: string | null) => Promise<Setting>;
       updateSelectedLLMModel: (selectedLLMModel: string | null) => Promise<Setting>;
 
       saveImage: (workflowPath: string, fileName: string, buffer: number[]) => Promise<string>;
       removeFile: (filePath: string) => Promise<void>;
       showInFolder: (filePath: string) => Promise<void>;
+
+      indexDocument: (documentPath: string) => Promise<{ documentId: string; chunks: number }>;
+      searchDocuments: (query: string, limit?: number) => Promise<unknown[]>;
     };
   }
 }

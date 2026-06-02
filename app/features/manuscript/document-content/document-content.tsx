@@ -7,6 +7,7 @@ import { showToast } from '~/lib/toast-manager';
 import GenerateComment from '~/features/manuscript/document-content/comments/generate-comment';
 import Comments from '~/features/manuscript/document-content/comments/comments';
 import { useDocumentContent } from '~/features/manuscript/document-content/hooks';
+import { indexDocument } from '~/lib/electron/embedding-api';
 
 type Props = {
   workspaceData: WorkspaceNode;
@@ -61,12 +62,20 @@ export const DocumentContent = ({ workspaceData, onUpdated }: Props) => {
     const updatedWorkspace = await handleUpdate(workspaceData);
     if (updatedWorkspace) onUpdated?.(updatedWorkspace);
     showToast('저장완료', 'success');
+
+    if (!updatedWorkspace?.path) {
+      return;
+    }
+
+    void indexDocument(updatedWorkspace.path);
   };
 
   return (
     <div>
       <div
-        className={'h-[90dvh] min-w-0 bg-white rounded-lg p-4 shadow-md my-4 flex flex-col overflow-hidden'}
+        className={
+          'h-[90dvh] min-w-0 bg-white rounded-lg p-4 shadow-md my-4 flex flex-col overflow-hidden'
+        }
       >
         <div className={'w-[300px]'}>
           <DnSwitch

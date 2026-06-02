@@ -39,6 +39,10 @@ const channels = {
     getInfo: 'setting:get-info',
     updateSelectedEmbeddingModel: 'setting:update-selected-embedding-model',
     updateSelectedLLMModel: 'setting:update-selected-llm-model',
+  },
+  embedding: {
+    indexDocument: 'embedding:index',
+    searchDocument: 'embedding:search',
   }
 };
 
