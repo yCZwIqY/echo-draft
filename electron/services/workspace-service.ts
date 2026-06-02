@@ -1,5 +1,6 @@
 import { createDocumentActions } from './document-actions.js';
 import { createFileActions } from './file-actions.js';
+import { createSettingActions } from './setting-actions.js';
 import { createWorkspaceActions } from './workspace-actions.js';
 import { createWorkspaceServiceContext } from './workspace-service-context.js';
 import type { App } from 'electron';
@@ -9,6 +10,7 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
   const workspaceActions = createWorkspaceActions(context);
   const documentActions = createDocumentActions(context);
   const fileActions = createFileActions(context);
+  const settingActions = createSettingActions(context);
 
   return {
     addRecentVisit: context.addRecentVisit,
@@ -18,6 +20,7 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
     getCurrentWorkspacePath: context.getCurrentWorkspacePath,
     getDocument: documentActions.getDocument,
     getStoreNodeByPath: context.getStoreNodeByPath,
+    getSettingInfo: settingActions.getSettingInfo,
     getTrashItems: workspaceActions.getTrashItems,
     getWorkflowInfo: workspaceActions.getWorkflowInfo,
     getWorkspaceInfo: context.getWorkspaceInfo,
@@ -37,6 +40,8 @@ export function createWorkspaceService(app: Pick<App, 'getPath'>) {
     toFileSystemPath: fileActions.toFileSystemPath,
     updateDocument: documentActions.updateDocument,
     updateRoot: context.updateRoot,
+    updateSelectedEmbeddingModel: settingActions.updateSelectedEmbeddingModel,
+    updateSelectedLLMModel: settingActions.updateSelectedLLMModel,
     updateWorkflowInfo: workspaceActions.updateWorkflowInfo,
     updateWorkspaceInfo: workspaceActions.updateWorkspaceInfo,
   };

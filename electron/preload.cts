@@ -76,8 +76,17 @@ const documentApi = {
     ipcRenderer.invoke(channels.document.updateDocument, documentPath, data),
 };
 
+const settingApi = {
+  getSettingInfo: () => ipcRenderer.invoke(channels.setting.getInfo),
+  updateSelectedEmbeddingModel: (selectedEmbeddingModel: string | null) =>
+    ipcRenderer.invoke(channels.setting.updateSelectedEmbeddingModel, selectedEmbeddingModel),
+  updateSelectedLLMModel: (selectedLLMModel: string | null) =>
+    ipcRenderer.invoke(channels.setting.updateSelectedLLMModel, selectedLLMModel),
+};
+
 contextBridge.exposeInMainWorld('electronAPI', {
   ...fileApi,
   ...workspaceApi,
   ...documentApi,
+  ...settingApi,
 });

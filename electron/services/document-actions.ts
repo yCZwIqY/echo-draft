@@ -111,7 +111,7 @@ export function createDocumentActions(context: WorkspaceServiceContext) {
     };
 
     if (!document.deletedAt) {
-      await context.addRecentVisitToSettings(document);
+      await context.addRecentVisit(document.path, document);
     }
 
     return document;
@@ -149,14 +149,12 @@ export function createDocumentActions(context: WorkspaceServiceContext) {
 
     await context.removeDocumentContentFile(workspacePath, node.id);
 
-    const removedIds = new Set([node.id]);
     await context.withWorkspaceRepositories(workspacePath, async ({ db, recentVisits, workspaceNodes }) => {
       await withTransaction(db, async () => {
         await recentVisits.deleteRecentVisitsByIds([node.id]);
         await workspaceNodes.deleteNodesByIds([node.id]);
       });
     });
-    await context.removeRecentVisitsFromSettings(removedIds);
 
     return {
       removed: true,

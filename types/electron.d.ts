@@ -52,8 +52,8 @@ declare global {
   };
 
   type Setting = {
-    workspacePath: string;
-    recentVisits: WorkspaceNode[];
+    selectedEmbeddingModel: string | null;
+    selectedLLMModel: string | null;
   };
 
   type WorkspaceUpdatePayload = {
@@ -111,6 +111,12 @@ declare global {
         documentPath: string,
         data: DocumentUpdatePayload,
       ) => Promise<WorkspaceNode>;
+
+      getSettingInfo: () => Promise<Setting>;
+      updateSelectedEmbeddingModel: (
+        selectedEmbeddingModel: string | null,
+      ) => Promise<Setting>;
+      updateSelectedLLMModel: (selectedLLMModel: string | null) => Promise<Setting>;
 
       saveImage: (workflowPath: string, fileName: string, buffer: number[]) => Promise<string>;
       removeFile: (filePath: string) => Promise<void>;

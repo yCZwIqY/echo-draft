@@ -34,6 +34,11 @@ const channels = {
     purgeDocument: 'document:purge',
     restoreDocument: 'document:restore',
     updateDocument: 'document:update',
+  },
+  setting: {
+    getInfo: 'setting:get-info',
+    updateSelectedEmbeddingModel: 'setting:update-selected-embedding-model',
+    updateSelectedLLMModel: 'setting:update-selected-llm-model',
   }
 };
 

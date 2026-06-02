@@ -8,16 +8,11 @@ import { withWorkspaceRepositories } from './workspace-repository-context.js';
 import { createWorkspaceSettings } from './workspace-settings.js';
 import { buildNodeInfo, toRecentVisit, type WorkspaceNodeData } from './workspace/nodes.js';
 import { ensureStore } from './workspace/store.js';
-import {
-  mergeRecentVisits,
-  normalizePath,
-  toFileSystemPath,
-} from './workspace/shared.js';
+import { mergeRecentVisits, normalizePath, toFileSystemPath } from './workspace/shared.js';
 import type { WorkspaceStore } from './workspace/store-types.js';
 
 export function createWorkspaceServiceContext(app: Pick<App, 'getPath'>) {
   const workspaceSettings = createWorkspaceSettings(app);
-  const { settingsStore } = workspaceSettings;
 
   async function assertInsideWorkspace(targetPath: string) {
     const workspacePath = await workspaceSettings.getCurrentWorkspacePath();
@@ -42,26 +37,6 @@ export function createWorkspaceServiceContext(app: Pick<App, 'getPath'>) {
       store,
       node: nodeByPath.get(normalizedTargetPath) ?? null,
     };
-  }
-
-  async function addRecentVisitToSettings(visit: WorkspaceNodeData) {
-    const settings = await settingsStore.read();
-
-    await settingsStore.write({
-      ...settings,
-      recentVisits: mergeRecentVisits(settings?.recentVisits, toRecentVisit(visit)),
-    });
-  }
-
-  async function removeRecentVisitsFromSettings(removedIds: Set<string>) {
-    const settings = await settingsStore.read();
-
-    await settingsStore.write({
-      ...settings,
-      recentVisits: (settings?.recentVisits ?? []).filter(
-        (visit) => !removedIds.has(visit.id ?? ''),
-      ),
-    });
   }
 
   async function addRecentVisit(_workflowPath: string, visit: WorkspaceNodeData) {
@@ -103,7 +78,6 @@ export function createWorkspaceServiceContext(app: Pick<App, 'getPath'>) {
 
   return {
     addRecentVisit,
-    addRecentVisitToSettings,
     assertInsideWorkspace,
     getCurrentWorkspaceInfo: workspaceSettings.getCurrentWorkspaceInfo,
     getCurrentWorkspacePath: workspaceSettings.getCurrentWorkspacePath,
@@ -113,10 +87,8 @@ export function createWorkspaceServiceContext(app: Pick<App, 'getPath'>) {
     initCurrentWorkspace: workspaceSettings.initCurrentWorkspace,
     removeCoverImage,
     removeDocumentContentFile,
-    removeRecentVisitsFromSettings,
     resetWorkspacePath: workspaceSettings.resetWorkspacePath,
     setCurrentWorkspacePath: workspaceSettings.setCurrentWorkspacePath,
-    settingsStore,
     updateRoot: workspaceSettings.updateRoot,
     withWorkspaceRepositories,
   };

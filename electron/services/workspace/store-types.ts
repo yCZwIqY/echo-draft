@@ -55,12 +55,18 @@ export type WorkspaceStoreRecentVisit = {
   [key: string]: unknown;
 };
 
+export type WorkspaceStoreSettingInfo = {
+  selectedEmbeddingModel: string | null;
+  selectedLLMModel: string | null;
+};
+
 export type WorkspaceStore = {
   version: number;
   workspace: WorkspaceStoreRoot;
   groups: WorkspaceStoreGroup[];
   documents: WorkspaceStoreDocument[];
   recentVisits: WorkspaceStoreRecentVisit[];
+  settingInfo: WorkspaceStoreSettingInfo;
 };
 
 export type StoredDocumentMetaInput = Partial<WorkspaceStoreDocument> &

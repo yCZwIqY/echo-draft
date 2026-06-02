@@ -5,6 +5,7 @@ import { initializeSchema, withDatabase, withTransaction } from '../../db/connec
 import { createDocumentInfoRepository } from '../../repositories/document-info-repository.js';
 import { createGroupInfoRepository } from '../../repositories/group-info-repository.js';
 import { createRecentVisitRepository } from '../../repositories/recent-visit-repository.js';
+import { createSettingRepository } from '../../repositories/setting-repository.js';
 import { createWorkspaceNodeRepository } from '../../repositories/workspace-node-repository.js';
 import { ensureDirectory, pathExists } from '../file-system.js';
 import {
@@ -14,7 +15,11 @@ import {
   parseRecentVisit,
   toRootWorkspaceNode,
 } from './store-mappers.js';
-import { ensureScriptsDirectory, readDocumentContent, writeDocumentContent } from './script-files.js';
+import {
+  ensureScriptsDirectory,
+  readDocumentContent,
+  writeDocumentContent,
+} from './script-files.js';
 import type { WorkspaceStore, WorkspaceStoreDocument, WorkspaceStoreGroup } from './store-types.js';
 import { normalizePath, now } from './shared.js';
 
@@ -43,11 +48,13 @@ export async function readStore(workspacePath: string): Promise<WorkspaceStore |
     const groupInfo = createGroupInfoRepository(db);
     const documentInfo = createDocumentInfoRepository(db);
     const recentVisits = createRecentVisitRepository(db);
+    const settingRepo = createSettingRepository(db);
 
     const nodeRows = await workspaceNodes.findAllNodes();
     const groupRows = await groupInfo.findAllGroupInfo();
     const documentRows = await documentInfo.findAllDocumentInfo();
     const recentVisitRows = await recentVisits.findAllRecentVisits();
+    const settingInfo = await settingRepo.findSettingInfo();
 
     const groupInfoById = new Map(groupRows.map((row) => [row.nodeId, row]));
     const documentInfoById = new Map(documentRows.map((row) => [row.nodeId, row]));
@@ -70,17 +77,19 @@ export async function readStore(workspacePath: string): Promise<WorkspaceStore |
       },
       groups: nodeRows
         .filter((row) => row.type === 'workspace' && row.id !== rootRow.id)
-        .map((row): WorkspaceStoreGroup => ({
-          id: row.id,
-          type: 'workspace',
-          parentId: row.parentId === rootRow.id ? null : row.parentId,
-          name: row.name,
-          description: groupInfoById.get(row.id)?.description ?? '',
-          coverPath: groupInfoById.get(row.id)?.coverPath ?? '',
-          createdAt: row.createdAt,
-          updatedAt: row.updatedAt,
-          deletedAt: row.deletedAt,
-        })),
+        .map(
+          (row): WorkspaceStoreGroup => ({
+            id: row.id,
+            type: 'workspace',
+            parentId: row.parentId === rootRow.id ? null : row.parentId,
+            name: row.name,
+            description: groupInfoById.get(row.id)?.description ?? '',
+            coverPath: groupInfoById.get(row.id)?.coverPath ?? '',
+            createdAt: row.createdAt,
+            updatedAt: row.updatedAt,
+            deletedAt: row.deletedAt,
+          }),
+        ),
       documents: nodeRows
         .filter((row) => row.type === 'document')
         .map((row): WorkspaceStoreDocument => {
@@ -103,13 +112,17 @@ export async function readStore(workspacePath: string): Promise<WorkspaceStore |
             updatedAt: row.updatedAt,
             deletedAt: row.deletedAt,
           };
-        }),
+      }),
       recentVisits: recentVisitRows.map((row) => parseRecentVisit(row.payload)),
+      settingInfo,
     };
   });
 }
 
-export async function writeStore(workspacePath: string, store: WorkspaceStore): Promise<WorkspaceStore> {
+export async function writeStore(
+  workspacePath: string,
+  store: WorkspaceStore,
+): Promise<WorkspaceStore> {
   const normalizedWorkspacePath = normalizePath(workspacePath);
   const nextStore: WorkspaceStore = {
     ...store,
@@ -187,4 +200,3 @@ export async function ensureStore(workspacePath: string): Promise<WorkspaceStore
 
   return writeStore(normalizedWorkspacePath, createEmptyStore(normalizedWorkspacePath));
 }
-

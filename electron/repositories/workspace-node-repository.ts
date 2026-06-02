@@ -6,7 +6,7 @@ import type {
   WorkspaceStore,
   WorkspaceStoreDocument,
   WorkspaceStoreGroup,
-  WorkspaceStoreRoot,
+  WorkspaceStoreRoot
 } from '../services/workspace/store-types.js';
 
 export type WorkspaceNodeRow = {
@@ -34,6 +34,14 @@ export function createWorkspaceNodeRepository(db: sqlite3.Database) {
   return {
     findAllNodes() {
       return all<WorkspaceNodeRow>(db, 'SELECT * FROM workspace_nodes ORDER BY createdAt ASC');
+    },
+
+    findRecentCreatedNodes(count: number = 5) {
+      return all<WorkspaceNodeRow>(db, `SELECT * FROM workspace_nodes ORDER BY createdAt ASC LIMIT ${count}`);
+    },
+
+    findRecentUpdatedNodes(count: number = 5) {
+      return all<WorkspaceNodeRow>(db, `SELECT * FROM workspace_nodes ORDER BY updatedAt ASC LIMIT ${count}`);
     },
 
     deleteAllNodes() {

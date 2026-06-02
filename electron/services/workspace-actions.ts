@@ -145,7 +145,6 @@ export function createWorkspaceActions(context: WorkspaceServiceContext) {
         await workspaceNodes.deleteNodesByIds([...removedNodeIds]);
       });
     });
-    await context.removeRecentVisitsFromSettings(removedNodeIds);
 
     return {
       removed: true,
@@ -203,7 +202,7 @@ export function createWorkspaceActions(context: WorkspaceServiceContext) {
     }
 
     if (!workflowData.deletedAt) {
-      await context.addRecentVisitToSettings(workflowData);
+      await context.addRecentVisit(workflowData.path, workflowData);
     }
 
     return workflowData;

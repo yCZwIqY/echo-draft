@@ -1,4 +1,5 @@
 import { registerDirectoryIpcHandlers } from './directory.js';
+import { registerSettingIpcHandlers } from './setting.js';
 import { registerWorkspaceIpcHandlers } from './workspace.js';
 import { registerDocumentIpcHandlers } from './document.js';
 import { createWorkspaceService } from '../services/workspace-service.js';
@@ -10,4 +11,5 @@ export function registerIpcHandlers(app: App) {
   registerDirectoryIpcHandlers();
   registerWorkspaceIpcHandlers(app, workspaceService);
   registerDocumentIpcHandlers(workspaceService);
+  registerSettingIpcHandlers(workspaceService);
 }

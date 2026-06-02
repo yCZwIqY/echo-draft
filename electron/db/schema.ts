@@ -3,6 +3,13 @@ export const WORKSPACE_SCHEMA_VERSION = 1;
 export const WORKSPACE_SCHEMA_STATEMENTS = [
   'PRAGMA foreign_keys = ON',
   `
+    CREATE TABLE IF NOT EXISTS setting_info (
+      id TEXT PRIMARY KEY CHECK (id = 'default'),
+      selectedEmbeddingModel TEXT,
+      selectedLLMModel TEXT
+    )
+  `,
+  `
     CREATE TABLE IF NOT EXISTS workspace_nodes (
       id TEXT PRIMARY KEY,
       parentId TEXT,

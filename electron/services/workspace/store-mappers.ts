@@ -29,6 +29,10 @@ export function createEmptyStore(workspacePath: string): WorkspaceStore {
     groups: [],
     documents: [],
     recentVisits: [],
+    settingInfo: {
+      selectedEmbeddingModel: null,
+      selectedLLMModel: null,
+    },
   };
 }
 

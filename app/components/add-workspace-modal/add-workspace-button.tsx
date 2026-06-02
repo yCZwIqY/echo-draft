@@ -5,7 +5,7 @@ import { type ReactNode, useEffect, useState } from 'react';
 import DnButton from '~/components/common/buttons/dn-button';
 import { showToast } from '~/lib/toast-manager';
 import { createDocument } from '~/lib/electron/document-api';
-import { AiOutlineFolderOpen } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineFolderOpen } from 'react-icons/ai';
 import { CiFileOn } from 'react-icons/ci';
 
 interface Props {
@@ -39,10 +39,16 @@ const AddWorkspaceButton = ({ targetPath, children, onCreated }: Props) => {
             'w-[320px] rounded-[28px] bg-stone-50 p-8 text-stone-900 shadow-[0_30px_90px_rgba(15,23,42,0.22)] ring-1 ring-white/70'
           }
         >
-          <div className={'flex items-start justify-between gap-4 pb-6'}>
+       <div className={'flex justify-end'}>
+         <button type={'button'} onClick={() => setIsOpen(false)}>
+           <AiOutlineClose/>
+         </button>
+       </div>
+          <div className={'flex items-center justify-between gap-4 pb-6'}>
             <div>
               <div className={'typo-b2-b text-stone-900'}>새 문서 혹은 그룹 추가</div>
             </div>
+
           </div>
           <div className={'text-stone-500 text-xs'}>
             하위에 생성: <br />

@@ -1,17 +1,16 @@
 import type { App } from 'electron';
 
 import { getDefaultWorkspacePath } from '../common/paths.js';
-import { createSettingsStore } from './settings-store.js';
+import { createCurrentWorkspaceRepository } from '../repositories/current-workspace-repository.js';
 import { pathExists } from './file-system.js';
 import { normalizePath } from './workspace/shared.js';
 import { ensureStore } from './workspace/store.js';
 
 export function createWorkspaceSettings(app: Pick<App, 'getPath'>) {
-  const settingsStore = createSettingsStore(app);
+  const currentWorkspaceRepository = createCurrentWorkspaceRepository(app);
 
   async function getCurrentWorkspacePath() {
-    const settings = await settingsStore.read();
-    return settings.workspacePath ?? getDefaultWorkspacePath();
+    return (await currentWorkspaceRepository.getCurrentWorkspacePath()) ?? getDefaultWorkspacePath();
   }
 
   async function getWorkspaceInfo(workspacePath: string) {
@@ -29,13 +28,9 @@ export function createWorkspaceSettings(app: Pick<App, 'getPath'>) {
 
   async function setCurrentWorkspacePath(workspacePath: string) {
     const normalizedWorkspacePath = normalizePath(workspacePath);
-    const settings = await settingsStore.read();
 
     await ensureStore(normalizedWorkspacePath);
-    await settingsStore.write({
-      ...settings,
-      workspacePath: normalizedWorkspacePath,
-    });
+    await currentWorkspaceRepository.setCurrentWorkspacePath(normalizedWorkspacePath);
 
     return {
       path: normalizedWorkspacePath,
@@ -62,13 +57,9 @@ export function createWorkspaceSettings(app: Pick<App, 'getPath'>) {
 
   async function updateRoot(targetPath: string) {
     const normalizedTargetPath = normalizePath(targetPath);
-    const settings = await settingsStore.read();
 
     await ensureStore(normalizedTargetPath);
-    await settingsStore.write({
-      ...settings,
-      workspacePath: normalizedTargetPath,
-    });
+    await currentWorkspaceRepository.setCurrentWorkspacePath(normalizedTargetPath);
 
     return {
       path: normalizedTargetPath,
@@ -83,7 +74,6 @@ export function createWorkspaceSettings(app: Pick<App, 'getPath'>) {
     initCurrentWorkspace,
     resetWorkspacePath,
     setCurrentWorkspacePath,
-    settingsStore,
     updateRoot,
   };
 }
