@@ -1,4 +1,5 @@
 export * from './client';
+export * from './comment-api';
 export * from './document-api';
 export * from './embedding-api';
 export * from './file-api';

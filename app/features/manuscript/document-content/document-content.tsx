@@ -48,6 +48,7 @@ export const DocumentContent = ({ workspaceData, onUpdated }: Props) => {
     handleUpdate,
   } = useDocumentContent();
   const [showType, setShowType] = useState<ShowType>('SPLIT');
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     resetContent(workspaceData);
@@ -60,13 +61,18 @@ export const DocumentContent = ({ workspaceData, onUpdated }: Props) => {
   const handleSave = async () => {
     const updatedWorkspace = await handleUpdate(workspaceData);
     if (updatedWorkspace) onUpdated?.(updatedWorkspace);
-    showToast('저장완료', 'success');
-
     if (!updatedWorkspace?.path) {
       return;
     }
 
-    void indexDocument(updatedWorkspace.path);
+    setLoading(true);
+    try {
+      await indexDocument(updatedWorkspace.path);
+    } catch {
+      console.error('임베딩 실패');
+    }
+    showToast('저장완료', 'success');
+    setLoading(false);
   };
 
   return (
@@ -135,12 +141,16 @@ export const DocumentContent = ({ workspaceData, onUpdated }: Props) => {
         <DnButton
           className={'w-[120px] self-end'}
           onClick={handleSave}
+          loading={loading}
         >
           저장
         </DnButton>
       </div>
       <div className={'flex flex-col gap-2'}>
-        <Comments documentPath={workspaceData.path} key={workspaceData.id} />
+        <Comments
+          documentPath={workspaceData.path}
+          key={workspaceData.id}
+        />
       </div>
     </div>
   );

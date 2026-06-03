@@ -45,7 +45,10 @@ const channels = {
     searchDocument: 'embedding:search',
   },
   comment: {
+    addExample: 'comment:add-example',
     generateComments: 'comment:generateComments',
+    listExamples: 'comment:list-examples',
+    removeExample: 'comment:remove-example',
   }
 };
 

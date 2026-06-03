@@ -5,6 +5,7 @@ const channels = require('./common/channels.cjs');
 type WorkspaceUpdatePayload = Record<string, unknown>;
 type DocumentUpdatePayload = Record<string, unknown>;
 type GenerateCommentsPayload = Record<string, unknown>;
+type AddCommentExamplePayload = Record<string, unknown>;
 
 contextBridge.exposeInMainWorld('electronMeta', {
   preloadReady: true,
@@ -97,8 +98,13 @@ const embeddingApi = {
 };
 
 const commentApi = {
+  addCommentExample: (payload: AddCommentExamplePayload) =>
+    ipcRenderer.invoke(channels.comment.addExample, payload),
   generateComments: (payload: GenerateCommentsPayload) =>
     ipcRenderer.invoke(channels.comment.generateComments, payload),
+  listCommentExamples: () => ipcRenderer.invoke(channels.comment.listExamples),
+  removeCommentExample: (id: string) =>
+    ipcRenderer.invoke(channels.comment.removeExample, id),
 };
 
 contextBridge.exposeInMainWorld('electronAPI', {

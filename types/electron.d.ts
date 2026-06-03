@@ -76,13 +76,32 @@ declare global {
     startAge: number;
     endAge: number;
     expertise: number;
-    gender: number;
     count: number;
+  };
+
+  type CommentExample = {
+    id: string;
+    content: string;
+    tone: string | null;
+    ageGroup: number | null;
+    expertiseLevel: number | null;
+    genre: string | null;
+    source: string | null;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  type AddCommentExamplePayload = {
+    content: string;
+    tone?: string | null;
+    ageGroup?: number | null;
+    expertiseLevel?: number | null;
+    genre?: string | null;
+    source?: string | null;
   };
 
   type GeneratedComment = {
     ageGroup: number;
-    gender: 'male' | 'female';
     expertiseLevel: number;
     expertiseLabel: string;
     content: string;
@@ -140,7 +159,10 @@ declare global {
       indexDocument: (documentPath: string) => Promise<{ documentId: string; chunks: number }>;
       searchDocuments: (query: string, limit?: number) => Promise<unknown[]>;
 
+      addCommentExample: (payload: AddCommentExamplePayload) => Promise<CommentExample>;
       generateComments: (payload: GenerateCommentsPayload) => Promise<GeneratedComment[]>;
+      listCommentExamples: () => Promise<CommentExample[]>;
+      removeCommentExample: (id: string) => Promise<{ removed: boolean; id: string }>;
     };
   }
 }

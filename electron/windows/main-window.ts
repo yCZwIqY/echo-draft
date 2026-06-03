@@ -21,6 +21,7 @@ function loadRenderer(mainWindow: BrowserWindow) {
 
 export function createMainWindow() {
   const mainWindow = new BrowserWindow({
+    title: '글씨스트',
     width: 1200,
     height: 700,
     show: false,

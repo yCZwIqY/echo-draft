@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 import { ensureStore } from './workspace/store.js';
+import { deleteDocumentEmbedding } from './embedding/lancedb-store.js';
 import { buildNodeInfo, buildRootWorkspaceNode, buildTrashNodes, buildTreeNodes } from './workspace/nodes.js';
 import {
   collectDocumentIdsByGroupIds,
@@ -108,6 +109,9 @@ export function createWorkspaceActions(context: WorkspaceServiceContext) {
         await recentVisits.deleteRecentVisitsByIds([...removedNodeIds]);
       });
     });
+    for (const documentId of removedDocumentIds) {
+      await deleteDocumentEmbedding(workspacePath, documentId);
+    }
 
     return {
       removed: true,
@@ -145,6 +149,9 @@ export function createWorkspaceActions(context: WorkspaceServiceContext) {
         await workspaceNodes.deleteNodesByIds([...removedNodeIds]);
       });
     });
+    for (const documentId of removedDocumentIds) {
+      await deleteDocumentEmbedding(workspacePath, documentId);
+    }
 
     return {
       removed: true,

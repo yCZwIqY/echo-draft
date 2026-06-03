@@ -3,10 +3,7 @@ import DnButton from '~/components/common/buttons/dn-button';
 import DnInput from '~/components/common/inputs/dn-input';
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: 'New React Router App' },
-    { name: 'description', content: 'Welcome to React Router!' },
-  ];
+  return [{ title: '글씨스트' }];
 }
 
 export default function DesignSystem() {

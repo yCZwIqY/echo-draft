@@ -67,6 +67,13 @@ export async function replaceDocumentEmbedding(
   }
 }
 
+export async function deleteDocumentEmbedding(workspacePath: string, documentId: string) {
+  const table = await getDocumentEmbeddingsTable(workspacePath);
+  if (!table) return;
+
+  await table.delete(`documentId = '${documentId.replaceAll("'", "''")}'`);
+}
+
 export async function searchDocumentEmbeddings(
   workspacePath: string,
   vector: number[],
@@ -90,11 +97,23 @@ export async function findDocumentEmbeddingsByParentPath(
 
   const rows = (await table
     .query()
-    .where(`documentPath LIKE '${parentPath.replaceAll("'", "''")}%'`)
+    .where(
+      `parentPath = '${parentPath.replaceAll("'", "''")}' OR documentPath LIKE '${parentPath.replaceAll("'", "''")}%'`,
+    )
     .limit(limit)
     .toArray()) as LanceDbSearchRow[];
 
-  return rows.map(toSearchResult);
+  return rows
+    .map(toSearchResult)
+    .sort((left, right) => {
+      const documentOrder = left.documentPath.localeCompare(right.documentPath);
+
+      if (documentOrder !== 0) {
+        return documentOrder;
+      }
+
+      return left.chunkIndex - right.chunkIndex;
+    });
 }
 
 function toSearchResult(row: LanceDbSearchRow): DocumentEmbeddingSearchResult {

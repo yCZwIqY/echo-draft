@@ -52,4 +52,18 @@ export const WORKSPACE_SCHEMA_STATEMENTS = [
       payload TEXT NOT NULL
     )
   `,
+  `
+    CREATE TABLE IF NOT EXISTS comment_examples (
+      id TEXT PRIMARY KEY,
+      content TEXT NOT NULL,
+      tone TEXT,
+      ageGroup INTEGER,
+      gender TEXT CHECK (gender IS NULL OR gender IN ('male', 'female')),
+      expertiseLevel INTEGER,
+      genre TEXT,
+      source TEXT,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL
+    )
+  `,
 ];

@@ -7,12 +7,12 @@ import { RxDoubleArrowDown } from 'react-icons/rx';
 import { generateComments } from '~/lib/electron/comment-api';
 
 const EXPERTISE_LABEL: Record<number, string> = {
-  0: '입문 독자',
-  20: '가벼운 독자',
-  40: '꾸준한 독자',
-  60: '깊이 읽는 독자',
-  80: '창작 경험자',
-  100: '편집 전문가',
+  0: '처음 읽는 독자',
+  20: '가볍게 즐기는 독자',
+  40: '자주 읽는 독자',
+  60: '꼼꼼히 읽는 독자',
+  80: '글을 써본 독자',
+  100: '편집/비평 경험자',
 };
 
 const EXPERTISE_STEPS = Object.entries(EXPERTISE_LABEL).map(([value, label]) => ({
@@ -37,7 +37,6 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
   const [startAge, setStartAge] = useState<number>(10);
   const [endAge, setEndAge] = useState<number>(20);
   const [expertise, setExpertise] = useState<number>(0);
-  const [gender, setGender] = useState(50);
   const [count, setCount] = useState(10);
 
   const [loading, setLoading] = useState(false);
@@ -51,7 +50,6 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
       startAge,
       endAge,
       expertise,
-      gender,
       count,
     });
 
@@ -67,7 +65,7 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
         <div>
           <div className={'typo-b3-b text-stone-900'}>댓글 페르소나 설정</div>
           <div className={'mt-1 typo-b5-r text-stone-400'}>
-            원고 내용을 기준으로 독자 반응 댓글을 생성합니다.
+            저장된 원고 내용을 기준으로 독자 반응 댓글을 생성합니다.
           </div>
         </div>
         <DnButton
@@ -80,7 +78,7 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
         </DnButton>
       </div>
       <div
-        className={`flex flex-col gap-6 overflow-hidden transition-all ${open ? 'h-[480px]' : 'h-0'}`}
+        className={`flex flex-col gap-6 overflow-hidden transition-all ${open ? 'h-[360px]' : 'h-0'}`}
       >
         <div className={'flex flex-col gap-3 px-2'}>
           <div className={'flex items-center justify-between gap-3'}>
@@ -139,25 +137,6 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
               </div>
             ))}
           </div>
-        </div>
-
-        <div className={'flex flex-col gap-3 px-2'}>
-          <div className={'flex items-center justify-between gap-3'}>
-            <div>
-              <div className={'typo-b4-b text-stone-900'}>성비</div>
-              <div className={'typo-b6-r text-stone-400'}>남성 댓글과 여성 댓글의 비율</div>
-            </div>
-            <div className={'typo-b5-b text-primary-500'}>
-              남({gender}):여({100 - gender})
-            </div>
-          </div>
-          <DnSlider
-            minValue={0}
-            maxValue={100}
-            value={gender}
-            onChange={setGender}
-            step={5}
-          />
         </div>
 
         <div className={'flex flex-col gap-3 px-2'}>

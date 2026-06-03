@@ -34,7 +34,7 @@ const TrashList = ({ items, onRestore, onDelete }: Props) => {
                 <div className={'truncate text-sm font-medium text-neutral-700'}>
                   {item.document?.title || item.name.split('.')[0]}
                 </div>
-                <div className={'truncate text-xs text-neutral-400'}>{item.path}</div>
+                <div className={'truncate text-xs text-neutral-400'}>{item.path.split('.')[0]}</div>
               </div>
               <div className={'text-right text-xs text-neutral-400'}>
                 {formatDate(new Date(item.deletedAt ?? ''), 'YYYY-MM-DD HH:mm:SS')}

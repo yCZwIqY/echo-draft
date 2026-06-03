@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 import { withTransaction } from '../db/connection.js';
+import { deleteDocumentEmbedding } from './embedding/lancedb-store.js';
 import {
   buildStoredDocumentMeta,
   ensureStore,
@@ -132,6 +133,7 @@ export function createDocumentActions(context: WorkspaceServiceContext) {
         await recentVisits.deleteRecentVisitsByIds([node.id]);
       });
     });
+    await deleteDocumentEmbedding(workspacePath, node.id);
 
     return {
       removed: true,
@@ -155,6 +157,7 @@ export function createDocumentActions(context: WorkspaceServiceContext) {
         await workspaceNodes.deleteNodesByIds([node.id]);
       });
     });
+    await deleteDocumentEmbedding(workspacePath, node.id);
 
     return {
       removed: true,

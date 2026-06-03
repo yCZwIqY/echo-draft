@@ -1,7 +1,6 @@
 
 const CommentItem = ({
   expertiseLabel,
-  gender,
   ageGroup,
   tone,
   content,
@@ -13,7 +12,7 @@ const CommentItem = ({
       </div>
       <div className={'flex flex-col gap-2'}>
         <div className={'font-bold text-sm'}>
-          {expertiseLabel} | {gender === 'male' ? '남' : '여'} | {ageGroup}대 | {tone}
+          {expertiseLabel} | {ageGroup}대 | {tone}
         </div>
         <div className={'whitespace-pre-line'}>{content}</div>
       </div>
