@@ -3,7 +3,7 @@ import DnButton from '~/components/common/buttons/dn-button';
 import DnInput from '~/components/common/inputs/dn-input';
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: '글씨스트' }];
+  return [{ title: '그루미' }];
 }
 
 export default function DesignSystem() {

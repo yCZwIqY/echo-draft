@@ -72,6 +72,12 @@ const DEFAULT_COMMENT_STYLE_EXAMPLES_JSON = `[
     "ageGroup": 30,
     "expertiseLevel": 100
   },
+    {
+    "content": "가독성 최악이네요. 중학생이 쓴 글 같습니다.",
+    "tone": "분석",
+    "ageGroup": 20,
+    "expertiseLevel": 100
+  },
   {
     "content": "여기서 표정 묘사 하나만 더 있었으면 감정이 더 잘 살았을 듯",
     "tone": "아쉬움",
@@ -125,9 +131,16 @@ const DEFAULT_COMMENT_STYLE_EXAMPLES_JSON = `[
     "tone": "캐릭터 반응",
     "ageGroup": 10,
     "expertiseLevel": 0
+  },
+  {
+    "content": "갖 -> 같. 오타났네요. 조금 더 꼼꼼히 검수해주시길.",
+    "tone": "지적",
+    "ageGroup": 30,
+    "expertiseLevel": 80
   }
 ]`;
 
 export function getDefaultCommentStyleExamples() {
   return JSON.parse(DEFAULT_COMMENT_STYLE_EXAMPLES_JSON) as DefaultCommentStyleExample[];
 }
+

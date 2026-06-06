@@ -53,10 +53,10 @@ const SideBar = () => {
               <div
                 className={'text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-500'}
               >
-                Draft Atelier
+                Writing Helper
               </div>
-              <div className={'pt-1 text-xl font-black tracking-[-0.04em] text-stone-900'}>
-                Draft Novel
+              <div className={'pt-1 text-xl font-black tracking-[-0.04em] text-stone-900 tracking-widest'}>
+                그루미
               </div>
             </div>
           )}

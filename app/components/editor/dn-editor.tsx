@@ -54,7 +54,7 @@ const DnEditor = ({ content, setContent, setStatus }: Props) => {
   }, [content, editor, setStatus]);
 
   return (
-    <div className={'w-full h-full flex flex-col gap-4 overflow-hidden'}>
+    <div className={'w-full h-full flex flex-col gap-4 overflow-hidden '}>
       <DnEditorToolbar editor={editor} />
       <label
         htmlFor={id}
@@ -65,7 +65,7 @@ const DnEditor = ({ content, setContent, setStatus }: Props) => {
           editor={editor}
           id={id}
           className={
-            'h-full [&>.ProseMirror]:h-full [&>.ProseMirror]:outline-none! [&>.ProseMirror]:border-none!'
+            'h-full [&>.ProseMirror]:h-full [&>.ProseMirror]:outline-none! [&>.ProseMirror]:border-none! [&>li]:list-decimal!'
           }
         />
       </label>

@@ -25,7 +25,7 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "글씨스트" }];
+  return [{ title: "그루미" }];
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {

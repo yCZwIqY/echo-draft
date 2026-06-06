@@ -7,15 +7,18 @@ import {
   listCommentExamples,
   removeCommentExample,
 } from '~/lib/electron/comment-api';
+import { DnSelect } from '~/components/common/selector';
 
 const EXPERTISE_LABEL: Record<number, string> = {
-  0: '처음 읽는 독자',
+  0: '입문 독자',
   20: '가볍게 즐기는 독자',
   40: '자주 읽는 독자',
   60: '꼼꼼히 읽는 독자',
-  80: '글을 써본 독자',
-  100: '편집/비평 경험자',
+  80: '창작 경험 보유',
+  100: '편집자/비평가',
 };
+
+const TONES = ['몰입', '의문', '추측', '아쉬움', '기대', '캐릭터 반응', '분석', '지적'];
 
 const AGE_GROUPS = [10, 20, 30, 40, 50, 60, 70, 80];
 const EXPERTISE_LEVELS = [0, 20, 40, 60, 80, 100];
@@ -96,47 +99,32 @@ const CommentStyleExampleSetting = () => {
           value={commentExampleContent}
         />
         <div className={'grid grid-cols-3 gap-2'}>
-          <select
-            className={
-              'rounded-md border border-neutral-200 bg-white px-2 py-2 text-xs outline-none'
-            }
-            onChange={(event) => setCommentExampleAgeGroup(event.target.value)}
+          <DnSelect
+            placeholder={'독자 나이대 선택'}
+            onChange={(value) => setCommentExampleAgeGroup(value.toString())}
             value={commentExampleAgeGroup}
-          >
-            <option value=''>나이대 전체</option>
-            {AGE_GROUPS.map((ageGroup) => (
-              <option
-                key={ageGroup}
-                value={ageGroup}
-              >
-                {ageGroup}대
-              </option>
-            ))}
-          </select>
-          <select
-            className={
-              'rounded-md border border-neutral-200 bg-white px-2 py-2 text-xs outline-none'
-            }
-            onChange={(event) => setCommentExampleExpertise(event.target.value)}
+            options={Object.entries(AGE_GROUPS).map(([key, value]) => ({
+              value: key,
+              label: `${value} 대`,
+            }))}
+          />
+          <DnSelect
+            placeholder={'독자 전문성 선택'}
+            onChange={(value) => setCommentExampleExpertise(value.toString())}
             value={commentExampleExpertise}
-          >
-            <option value=''>전문성 전체</option>
-            {EXPERTISE_LEVELS.map((expertise) => (
-              <option
-                key={expertise}
-                value={expertise}
-              >
-                {EXPERTISE_LABEL[expertise]}
-              </option>
-            ))}
-          </select>
-          <input
-            className={
-              'rounded-md border border-neutral-200 bg-white px-2 py-2 text-xs outline-none'
-            }
-            onChange={(event) => setCommentExampleTone(event.target.value)}
-            placeholder='톤 예) 공감, 의문'
+            options={Object.entries(EXPERTISE_LABEL).map(([key, value]) => ({
+              value: key,
+              label: value,
+            }))}
+          />
+          <DnSelect
+            placeholder={'톤 선택'}
+            onChange={(value) => setCommentExampleTone(value.toString())}
             value={commentExampleTone}
+            options={TONES.map((it) => ({
+              label: it,
+              value: it,
+            }))}
           />
         </div>
         <div className={'flex justify-end'}>

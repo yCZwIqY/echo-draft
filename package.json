@@ -2,7 +2,7 @@
   "name": "draft-novel",
   "private": true,
   "type": "module",
-  "productName": "글씨스트",
+  "productName": "그루미",
   "main": "dist-electron/main.js",
   "scripts": {
     "build": "pnpm electron:build && react-router build",

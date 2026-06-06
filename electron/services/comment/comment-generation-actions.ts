@@ -205,14 +205,15 @@ export function createCommentGenerationActions(context: WorkspaceServiceContext)
 - expertiseLevel은 0, 20, 40, 60, 80, 100 중 하나만 사용한다.
 - expertiseLevel은 주어진 전문성 수치를 벗어나면 안된다.
 - expertiseLabel은 expertiseLevel에 맞춰 사용한다.
-  - 0: 처음 읽는 독자
+  - 0: 입문 독자
   - 20: 가볍게 즐기는 독자
   - 40: 자주 읽는 독자
   - 60: 꼼꼼히 읽는 독자
-  - 80: 글을 써본 독자
-  - 100: 편집/비평 경험자
-- tone은 "몰입", "의문", "추측", "아쉬움", "기대", "캐릭터 반응", "분석" 중 하나만 사용한다.
+  - 80: 창작 경험 보유
+  - 100: 편집자/비평가
+- tone은 "몰입", "의문", "추측", "아쉬움", "기대", "캐릭터 반응", "분석", "지적" 중 하나만 사용한다.
 - usedContext는 GROUP_CONTEXT를 댓글 작성에 참고했으면 true, 아니면 false다.
+- TARGET_SCRIPT에 대한 맞춤법 검사를 수행하고, 틀린 부분이 있을 경우 댓글 중 하나를 맞춤법 지적 댓글로 변경한다.
 
 댓글 작성 규칙:
 1. 현재 스크립트 안에 드러난 장면, 대사, 감정, 전개에 반응한다.

@@ -1,3 +1,4 @@
+import { FaUser } from 'react-icons/fa';
 
 const CommentItem = ({
   expertiseLabel,
@@ -6,9 +7,11 @@ const CommentItem = ({
   content,
 }: GeneratedComment) => {
   return (
-    <div className={'rounded-xl border border-stone-200 bg-white/90 p-8 shadow-sm flex gap-4'}>
+    <div className={'border-b border-stone-300 py-5 flex gap-4 items-center'}>
       <div>
-        <div className={'size-10 bg-gray-500 rounded-full'}></div>
+        <div className={'size-10 bg-gray-400 rounded-full flex items-center justify-center overflow-hidden'}>
+          <FaUser size={32} className={'mt-2'} color={'white'}/>
+        </div>
       </div>
       <div className={'flex flex-col gap-2'}>
         <div className={'font-bold text-sm'}>

@@ -7,12 +7,12 @@ import { RxDoubleArrowDown } from 'react-icons/rx';
 import { generateComments } from '~/lib/electron/comment-api';
 
 const EXPERTISE_LABEL: Record<number, string> = {
-  0: '처음 읽는 독자',
+  0: '입문 독자',
   20: '가볍게 즐기는 독자',
   40: '자주 읽는 독자',
   60: '꼼꼼히 읽는 독자',
-  80: '글을 써본 독자',
-  100: '편집/비평 경험자',
+  80: '창작 경험 보유',
+  100: '편집자/비평가',
 };
 
 const EXPERTISE_STEPS = Object.entries(EXPERTISE_LABEL).map(([value, label]) => ({

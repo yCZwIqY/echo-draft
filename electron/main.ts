@@ -2,7 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import { registerIpcHandlers } from './ipc/index.js';
 import { createMainWindow } from './windows/main-window.js';
 
-app.setName('글씨스트');
+app.setName('그루미');
 
 registerIpcHandlers(app);
 
