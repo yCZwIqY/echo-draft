@@ -109,6 +109,23 @@ declare global {
     usedContext: boolean;
   };
 
+  type OllamaModel = {
+    name: string;
+    model: string;
+    modified_at: Date;
+    size: number;
+    digest: string;
+    details: {
+      format: string;
+      family: string;
+      families: string[] | null;
+      parameter_size: string;
+      quantization_level: string;
+      parent_model: string;
+    };
+    capabilities: string[];
+  };
+
 
   interface Window {
     electronMeta?: {
@@ -158,6 +175,9 @@ declare global {
 
       indexDocument: (documentPath: string) => Promise<{ documentId: string; chunks: number }>;
       searchDocuments: (query: string, limit?: number) => Promise<unknown[]>;
+
+      isOllamaRunning: () => Promise<boolean>;
+      listOllamaModels: () => Promise<{ models: OllamaModel[] }>;
 
       addCommentExample: (payload: AddCommentExamplePayload) => Promise<CommentExample>;
       generateComments: (payload: GenerateCommentsPayload) => Promise<GeneratedComment[]>;

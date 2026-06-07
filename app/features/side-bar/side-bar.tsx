@@ -6,6 +6,7 @@ import { getWorkspaceTree, onWorkspaceTreeChanged } from '~/lib/electron/workspa
 import SideBarItem from '~/features/side-bar/side-bar-item';
 import { AiOutlineLeft, AiOutlineMenu, AiOutlinePlus, AiOutlineSetting } from 'react-icons/ai';
 import DnIconButton from '~/components/common/buttons/dn-icon-button';
+import logo from '~/assets/logo.png';
 
 const SideBar = () => {
   const { workspacePath } = useWorkspacePath();
@@ -50,14 +51,12 @@ const SideBar = () => {
             <div
               className={`min-w-0 min-h-0 overflow-hidden transition-opacity break-keep whitespace-nowrap`}
             >
-              <div
-                className={'text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-500'}
-              >
-                Writing Helper
-              </div>
-              <div className={'pt-1 text-xl font-black tracking-[-0.04em] text-stone-900 tracking-widest'}>
-                그루미
-              </div>
+              <img
+                src={logo}
+                alt={'그루미'}
+                width={100}
+                height={60}
+              />
             </div>
           )}
           <div className={`shrink-0 flex-1 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>

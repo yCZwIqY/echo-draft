@@ -6,6 +6,7 @@ import { createWorkspaceService } from '../services/workspace-service.js';
 import type { App } from 'electron';
 import { registerEmbeddingIPCHandler } from './embedding.js';
 import { registerCommentIpcHandlers } from './comment.js';
+import { registerOllamaIpcHandlers } from './ollama.js';
 
 export function registerIpcHandlers(app: App) {
   const workspaceService = createWorkspaceService(app);
@@ -16,4 +17,5 @@ export function registerIpcHandlers(app: App) {
   registerSettingIpcHandlers(workspaceService);
   registerEmbeddingIPCHandler(workspaceService);
   registerCommentIpcHandlers(workspaceService);
+  registerOllamaIpcHandlers();
 }

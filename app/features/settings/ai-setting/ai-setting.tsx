@@ -107,14 +107,14 @@ const AiSetting = () => {
       });
   }, []);
 
-  const handleEmbeddingModelChange = async (value: string) => {
-    const nextValue = value || null;
+  const handleEmbeddingModelChange = async (value: string | number) => {
+    const nextValue = value ? String(value) : null;
     setSelectedEmbeddingModel(nextValue);
     await updateSelectedEmbeddingModel(nextValue);
   };
 
-  const handleLLMModelChange = async (value: string) => {
-    const nextValue = value || null;
+  const handleLLMModelChange = async (value: string | number) => {
+    const nextValue = value ? String(value) : null;
     setSelectedLLMModel(nextValue);
     await updateSelectedLLMModel(nextValue);
   };

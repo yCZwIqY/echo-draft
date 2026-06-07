@@ -44,6 +44,10 @@ const channels = {
     indexDocument: 'embedding:index',
     searchDocument: 'embedding:search',
   },
+  ollama: {
+    isRunning: 'ollama:is-running',
+    listModels: 'ollama:list-models',
+  },
   comment: {
     addExample: 'comment:add-example',
     generateComments: 'comment:generateComments',

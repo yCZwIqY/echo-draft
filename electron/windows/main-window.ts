@@ -1,16 +1,24 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow, nativeImage } from 'electron';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DEV_SERVER_URL = process.env.ELECTRON_RENDERER_URL ?? 'http://localhost:3000';
+const PRODUCTION_RENDERER_URL = 'app://groomi/';
 const RETRY_DELAY_MS = 1000;
 const PRELOAD_PATH = path.resolve(__dirname, '../preload.cjs');
 
+function getWindowIcon() {
+  const iconPath = path.resolve(app.getAppPath(), 'assets/app-logo.png');
+  return nativeImage.createFromPath(iconPath);
+}
+
 function loadRenderer(mainWindow: BrowserWindow) {
-  mainWindow.loadURL(DEV_SERVER_URL).catch(() => {
+  const rendererUrl = app.isPackaged ? PRODUCTION_RENDERER_URL : DEV_SERVER_URL;
+
+  mainWindow.loadURL(rendererUrl).catch(() => {
     setTimeout(() => {
       if (!mainWindow.isDestroyed()) {
         loadRenderer(mainWindow);
@@ -25,6 +33,7 @@ export function createMainWindow() {
     width: 1200,
     height: 700,
     show: false,
+    icon: getWindowIcon(),
     webPreferences: {
       preload: PRELOAD_PATH,
       contextIsolation: true,

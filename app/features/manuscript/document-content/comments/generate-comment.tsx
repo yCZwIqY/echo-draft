@@ -1,10 +1,12 @@
 import DnSlider from '~/components/common/slider/dn-slider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DnRangeSlider } from '~/components/common/slider';
 import { DnChipGroup } from '~/components/common/chip-group';
 import DnButton from '~/components/common/buttons/dn-button';
 import { RxDoubleArrowDown } from 'react-icons/rx';
 import { generateComments } from '~/lib/electron/comment-api';
+import { getOllamaRunning } from '~/lib/ollama-api';
+import { showToast } from '~/lib/toast-manager';
 
 const EXPERTISE_LABEL: Record<number, string> = {
   0: '입문 독자',
@@ -40,21 +42,51 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
   const [count, setCount] = useState(10);
 
   const [loading, setLoading] = useState(false);
+  const [checkingOllama, setCheckingOllama] = useState(true);
+  const [ollamaRunning, setOllamaRunning] = useState(false);
 
   const [open, setOpen] = useState<boolean>(false);
+  const disabled = checkingOllama || !ollamaRunning || loading;
+
+  const checkOllama = async () => {
+    setCheckingOllama(true);
+
+    try {
+      setOllamaRunning(await getOllamaRunning());
+    } catch {
+      setOllamaRunning(false);
+    } finally {
+      setCheckingOllama(false);
+    }
+  };
+
+  useEffect(() => {
+    void checkOllama();
+  }, []);
 
   const handleGenerate = async () => {
-    setLoading(true);
-    const comments = await generateComments({
-      documentPath,
-      startAge,
-      endAge,
-      expertise,
-      count,
-    });
+    if (!ollamaRunning) {
+      showToast('Ollama를 실행한 뒤 다시 시도해주세요.', 'danger');
+      return;
+    }
 
-    onGenerated?.(comments);
-    setLoading(false);
+    setLoading(true);
+
+    try {
+      const comments = await generateComments({
+        documentPath,
+        startAge,
+        endAge,
+        expertise,
+        count,
+      });
+
+      onGenerated?.(comments);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : '댓글 생성에 실패했습니다.', 'danger');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,13 +104,31 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
           className={''}
           variant={'outlined'}
           loading={loading}
+          disabled={disabled}
           onClick={handleGenerate}
         >
-          댓글 생성
+          {checkingOllama ? 'Ollama 확인 중' : '댓글 생성'}
         </DnButton>
       </div>
+      {!checkingOllama && !ollamaRunning && (
+        <div className='mb-5 flex items-center justify-between gap-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3'>
+          <div>
+            <div className='text-sm font-bold text-amber-800'>Ollama가 실행 중이지 않습니다.</div>
+            <div className='mt-1 text-xs text-amber-700'>
+              댓글 페르소나 설정과 댓글 생성을 사용하려면 Ollama를 먼저 실행해주세요.
+            </div>
+          </div>
+          <DnButton
+            variant='outlined'
+            disabled={checkingOllama}
+            onClick={() => void checkOllama()}
+          >
+            다시 확인
+          </DnButton>
+        </div>
+      )}
       <div
-        className={`flex flex-col gap-6 overflow-hidden transition-all ${open ? 'h-[360px]' : 'h-0'}`}
+        className={`flex flex-col gap-6 overflow-hidden transition-all ${open ? 'h-[360px]' : 'h-0'} ${disabled ? 'opacity-50' : ''}`}
       >
         <div className={'flex flex-col gap-3 px-2'}>
           <div className={'flex items-center justify-between gap-3'}>
@@ -99,6 +149,7 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
               setEndAge(endAge);
             }}
             step={10}
+            disabled={disabled}
           />
           <div className={'grid grid-cols-8 gap-1 text-[11px] leading-snug text-stone-400'}>
             {AGE_STEPS.map((age) => (
@@ -126,6 +177,7 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
             value={expertise}
             onChange={setExpertise}
             step={20}
+            disabled={disabled}
           />
           <div className={'grid grid-cols-6 gap-1 text-[11px] leading-snug text-stone-400'}>
             {EXPERTISE_STEPS.map(({ value, label }) => (
@@ -151,6 +203,7 @@ const GenerateComment = ({ documentPath, onGenerated }: Props) => {
             options={COMMENT_COUNT_OPTIONS}
             value={count}
             onChange={setCount}
+            disabled={disabled}
           />
         </div>
       </div>

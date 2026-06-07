@@ -6,6 +6,7 @@
 /.react-router/
 /build/
 /dist-electron/
+/release/
 
 .idea
 .codex

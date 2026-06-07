@@ -97,6 +97,11 @@ const embeddingApi = {
     ipcRenderer.invoke(channels.embedding.searchDocument, query, limit),
 };
 
+const ollamaApi = {
+  isOllamaRunning: () => ipcRenderer.invoke(channels.ollama.isRunning),
+  listOllamaModels: () => ipcRenderer.invoke(channels.ollama.listModels),
+};
+
 const commentApi = {
   addCommentExample: (payload: AddCommentExamplePayload) =>
     ipcRenderer.invoke(channels.comment.addExample, payload),
@@ -113,5 +118,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   ...documentApi,
   ...settingApi,
   ...embeddingApi,
+  ...ollamaApi,
   ...commentApi,
 });
